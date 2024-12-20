@@ -1,580 +1,868 @@
-# Airflow Helm Chart (User Community)
-
-<br>
-
-The `User-Community Airflow Helm Chart` is the standard way to deploy [Apache Airflow](https://airflow.apache.org/) on [Kubernetes](https://kubernetes.io/) with [Helm](https://helm.sh/).
-<br>
-Originally created in 2017, it has since helped thousands of companies create production-ready deployments of Airflow on Kubernetes.
-
-<br>
-
-<p>
-  <a href="https://github.com/airflow-helm/charts/releases">
-    <img alt="Downloads" src="https://img.shields.io/github/downloads/airflow-helm/charts/total?style=flat-square&color=28a745">
-  </a>
-  <a href="https://github.com/airflow-helm/charts/graphs/contributors">
-    <img alt="Contributors" src="https://img.shields.io/github/contributors/airflow-helm/charts?style=flat-square&color=28a745">
-  </a>
-  <a href="https://github.com/airflow-helm/charts/blob/main/LICENSE">
-    <img alt="License" src="https://img.shields.io/github/license/airflow-helm/charts?style=flat-square&color=28a745">
-  </a>
-  <a href="https://github.com/airflow-helm/charts/releases">
-    <img alt="Latest Release" src="https://img.shields.io/github/v/release/airflow-helm/charts?style=flat-square&color=6f42c1&label=latest%20release">
-  </a>
-  <a href="https://artifacthub.io/packages/helm/airflow-helm/airflow">
-    <img alt="ArtifactHub" src="https://img.shields.io/static/v1?style=flat-square&color=417598&logo=artifacthub&label=ArtifactHub&message=airflow-helm">
-  </a>
-</p>
-
-<p>
-  <a href="https://github.com/airflow-helm/charts/stargazers">
-    <img alt="GitHub Stars" src="https://img.shields.io/github/stars/airflow-helm/charts?style=for-the-badge&color=ffcb2f&label=Support%20with%20%E2%AD%90%20on%20GitHub">
-  </a>
-  <a href="https://artifacthub.io/packages/helm/airflow-helm/airflow">
-    <img alt="ArtifactHub Stars" src="https://img.shields.io/badge/dynamic/json?style=for-the-badge&color=ffcb2f&label=Support%20with%20%E2%AD%90%20on%20ArtifactHub&query=stars&url=https://artifacthub.io/api/v1/packages/af52c9e8-afa6-4443-952f-3d4d17e3be35/stars">
-  </a>
-</p>
-
-<p>
-  <a href="https://github.com/airflow-helm/charts/discussions">
-    <img alt="GitHub Discussions" src="https://img.shields.io/github/discussions/airflow-helm/charts?style=for-the-badge&color=17a2b8&label=Start%20a%20Discussion">
-  </a>
-  <a href="https://github.com/airflow-helm/charts/issues/new/choose">
-    <img alt="GitHub Issues" src="https://img.shields.io/github/issues/airflow-helm/charts?style=for-the-badge&color=17a2b8&label=Open%20an%20Issue">
-  </a>
-</p>
-
-<br>
-
-## Project Goals
-
-1. Ease of Use
-2. Great Documentation
-3. Support for older Airflow Versions
-4. Support for Kubernetes GitOps Tools (like ArgoCD)
-
-## Key Features
-
-- __Support for Airflow Versions:__ 
-   - [`1.10` | `2.0` | `2.1` | `2.2` | `2.3` | `2.4` | `2.5` | `2.6` | `2.7` | `2.8` | `2.9` | `2.10`](#airflow-version-support)
-- __Support for Airflow Executors:__ 
-   - [`CeleryExecutor` | `KubernetesExecutor` | `CeleryKubernetesExecutor`](#airflow-executor-support)
-- __Easily Connect with your Database:__
-   - [`Connect to Postgres`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/database/external-database.md#option-1---postgres) |
-     [`Configure PgBouncer`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/database/pgbouncer.md) |
-     [`Connect to MySQL`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/database/external-database.md#option-2---mysql)
-- __Declaratively Manage Airflow Configs:__
-   - [`Users`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/security/airflow-users.md) |
-     [`Connections`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/dags/airflow-connections.md) |
-     [`Variables`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/dags/airflow-variables.md) |
-     [`Pools`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/dags/airflow-pools.md)
-- __Load Airflow DAGs:__
-   - [`Load from Git-Sync`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/dags/load-dag-definitions.md#option-1---git-sync-sidecar) |
-     [`Load from Volume`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/dags/load-dag-definitions.md#option-2---persistent-volume-claim) |
-     [`Embed Into Image`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/dags/load-dag-definitions.md#option-3---embedded-into-container-image)
-- __Manage Airflow Logs:__
-   - [`Persist on Volume`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/monitoring/log-persistence.md#option-1---persistent-volume-claim) |
-     [`Persist on Remote Provider`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/monitoring/log-persistence.md#option-2---remote-providers) |
-     [`Automatic Log Cleanup`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/monitoring/log-cleanup.md)
-- __Install Extra Python Packages:__
-   - [`Install with Init-Containers`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/configuration/extra-python-packages.md#option-1---init-containers) |
-     [`Embed Into Image`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/configuration/extra-python-packages.md#option-2---embedded-into-container-image)
-- __Automatically Restart Unhealthy Airflow Schedulers:__
-   - [`Heartbeat Check`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/monitoring/scheduler-liveness-probe.md#scheduler-heartbeat-check) |
-     [`Task Creation Check`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/monitoring/scheduler-liveness-probe.md#scheduler-task-creation-check)
-
-## History
-
-The `User-Community Airflow Helm Chart` chart has a long history of being the standard way to deploy Apache Airflow on Kubernetes.
-
-Here is a brief overview of the chart's development from 2017 until today:
-
-- From October 2017 until December 2018, the chart was called `kube-airflow` and was developed in [`gsemet/kube-airflow`](https://github.com/gsemet/kube-airflow)
-- From December 2018 until November 2020, the chart was called `stable/airflow` and was developed in [`helm/charts`](https://github.com/helm/charts/tree/master/stable/airflow)
-- Since November 2020, the chart has been called `Airflow Helm Chart (User Community)` and is developed in `airflow-helm/charts`
-
-> Please note, this chart is __independent__ from the official chart in the `apache/airflow` repo, which was forked from Astronomer's proprietary chart in May 2021.
-
-<br>
-
-## Guides
-
-#### [`Quickstart Guide`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/guides/quickstart.md) <sup><sub>⭐</sub></sup> <a id="quickstart-guide"></a>
-
-#### [`Upgrade Guide`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/guides/upgrade.md) <sup><sub>⭐</sub></sup> <a id="upgrade"></a>
-
-#### [`Uninstall Guide`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/guides/uninstall.md) <a id="uninstall"></a>
-
-## Frequently Asked Questions
-
-- __Configuration:__
-  - [`Set Airflow Version`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/configuration/airflow-version.md) <sup><sub>⭐</sub></sup> <a id="how-to-use-a-specific-version-of-airflow"></a>
-  - [`Manage Airflow Configs`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/configuration/airflow-configs.md) <sup><sub>⭐</sub></sup> <a id="how-to-set-airflow-configs"></a>
-  - [`Manage Airflow Plugins`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/configuration/airflow-plugins.md)
-  - [`Install Extra Python/Pip Packages`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/configuration/extra-python-packages.md) <a id="how-to-install-extra-pip-packages"></a>
-  - [`Configure Celery Worker Autoscaling`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/configuration/autoscaling-celery-workers.md) <a id="how-to-set-up-celery-worker-autoscaling"></a>
-- __DAGs:__
-  - [`Load Airflow DAGs`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/dags/load-dag-definitions.md) <sup><sub>⭐</sub></sup> <a id="how-to-store-dags"></a>
-  - [`Manage Airflow Connections`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/dags/airflow-connections.md) <sup><sub>⭐</sub></sup> <a id="how-to-create-airflow-connections"></a>
-  - [`Manage Airflow Variables`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/dags/airflow-variables.md) <a id="how-to-create-airflow-variables"></a>
-  - [`Manage Airflow Pools`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/dags/airflow-pools.md) <a id="how-to-create-airflow-pools"></a>
-- __Security:__
-  - [`Manage Airflow Users`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/security/airflow-users.md) <sup><sub>⭐</sub></sup> <a id="how-to-create-airflow-users"></a>
-  - [`Integrate Airflow with LDAP or OAUTH`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/security/ldap-oauth.md) <a id="how-to-authenticate-airflow-users-with-ldapoauth"></a>
-  - [`Set Airflow Fernet Encryption Key`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/security/set-fernet-key.md) <a id="how-to-set-a-custom-fernet-encryption-key"></a>
-  - [`Set Airflow Webserver Secret Key`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/security/set-webserver-secret-key.md) <a id="how-to-set-a-custom-webserver-secret_key"></a>
-- __Monitoring:__
-  - [`Manage Airflow Logs`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/monitoring/log-persistence.md) <sup><sub>⭐</sub></sup> <a id="how-to-persist-airflow-logs"></a>
-  - [`Manage Airflow Logs Cleanup`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/monitoring/log-cleanup.md)
-  - [`Configure Scheduler Liveness Probe`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/monitoring/scheduler-liveness-probe.md) <a id="how-to-configure-the-scheduler-liveness-probe"></a>
-  - [`Integrate Airflow with Prometheus`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/monitoring/prometheus.md) <a id="how-to-integrate-airflow-with-prometheus"></a>
-- __Databases:__
-  - [`Configure Database (Built-In)`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/database/embedded-database.md) <a id="how-to-use-the-embedded-postgres"></a>
-  - [`Configure Database (External)`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/database/external-database.md) <sup><sub>⭐</sub></sup> <a id="how-to-use-an-external-database"></a>
-  - [`Configure PgBouncer`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/database/pgbouncer.md)
-  - [`Configure Redis (Built-In)`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/database/embedded-redis.md)
-  - [`Configure Redis (External)`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/database/external-redis.md) <sup><sub>⭐</sub></sup> <a id="how-to-use-an-external-redis"></a>
-- __Kubernetes:__
-  - [`Configure Kubernetes Ingress`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/kubernetes/ingress.md) <sup><sub>⭐</sub></sup> <a id="how-to-set-up-an-ingress"></a>
-  - [`Mount Extra Persistent Volumes`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/kubernetes/mount-persistent-volumes.md) <sup><sub>⭐</sub></sup>
-  - [`Mount Files from Secrets/ConfigMaps`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/kubernetes/mount-files.md) <a id="how-to-mount-secretsconfigmaps-as-files-on-workers"></a>
-  - [`Mount Environment Variables from Secrets/ConfigMaps`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/kubernetes/mount-environment-variables.md) <a id="how-to-create-airflow-variables"></a>
-  - [`Configure Pod Affinity, Selectors, Tolerations, TopologySpreadConstraints`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/kubernetes/affinity-node-selectors-tolerations.md) <a id="how-to-use-pod-affinity-nodeselector-and-tolerations"></a>
-  - [`Include Extra Kubernetes Manifests`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/kubernetes/extra-manifests.md) <a id="how-to-add-extra-manifests"></a>
-
-## Examples
-
-- __Custom Values Starting Points:__
-  - [`CeleryExecutor`](sample-values-CeleryExecutor.yaml)
-  - [`KubernetesExecutor`](sample-values-KubernetesExecutor.yaml)
-  - [`CeleryKubernetesExecutor`](sample-values-CeleryKubernetesExecutor.yaml)
-- __Real-World Examples:__
-  - [`Minikube / Kind / K3D`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/examples/minikube)
-  - [`Google Kubernetes Engine (GKE)`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/examples/google-gke)
-
-<br>
-
-## Airflow Version Support
-
-The following table lists the __airflow versions__ supported by this chart (set the version with [`airflow.image.tag`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/docs/faq/configuration/airflow-version.md) value).
-
-Chart Version → <br> Airflow Version ↓  | `7.0.0` - `7.16.0` | `8.0.0` - `8.5.3` | `8.6.0` | `8.6.1` - `8.7.0` | `8.7.1` | `8.8.0` | `8.9.0+`
---- | --- | --- | --- | --- | --- | --- | ---
-`1.10.X` | ✔️ | ✔️ <sub>[1]</sub> | ✔️️ <sub>[1]</sub> | ✔️️ <sub>[1]</sub> | ✔️️ <sub>[1]</sub> | ✔️️ <sub>[1]</sub> | ✔️️ <sub>[1]</sub>
-`2.0.X` | ❌ | ✔️ | ✔️ | ✔️ | ✔️️ | ✔️️ | ✔️️
-`2.1.X` | ❌ | ✔️ | ✔️ | ✔️ | ✔️️ | ✔️️ | ✔️️
-`2.2.X` | ❌ | ⚠️ <sub>[2]</sub> | ✔️️ | ✔️ | ✔️️ | ✔️️ | ✔️️
-`2.3.X` | ❌ | ❌ | ❌ | ✔️️ | ✔️️ | ✔️️ | ✔️️
-`2.4.X` | ❌ | ❌ | ❌ | ✔️️ | ✔️️ | ✔️️ | ✔️️
-`2.5.X` | ❌ | ❌ | ❌ | ✔️️ | ✔️️ | ✔️️ | ✔️️
-`2.6.X` | ❌ | ❌ | ❌ | ❌ | ✔️️ | ✔️️ | ✔️️
-`2.7.X` | ❌ | ❌ | ❌ | ❌ | ❌ | ✔️️ | ✔️️
-`2.8.X` | ❌ | ❌ | ❌ | ❌ | ❌ | ✔️️ | ✔️️
-`2.9.X` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌️ | ✔️️
-`2.10.X` | ❌ | ❌ | ❌ | ❌ | ❌ | ❌️ | ⚠️ <sub>[3]</sub>
-
-<sub>[1] you must set `airflow.legacyCommands = true` when using airflow version `1.10.X`</sub>
-<br>
-<sub>[2] the [Deferrable Operators & Triggers](https://airflow.apache.org/docs/apache-airflow/stable/concepts/deferring.html) feature won't work, as there is no `airflow triggerer` Deployment</sub>
-<br>
-<sub>[3] airflow version `2.10.1` has a [serious issue](https://github.com/apache/airflow/issues/42111) with git-sync, use `2.10.2` or later</sub>
-
-## Airflow Executor Support
-
-The following table lists the [__airflow executors__](https://airflow.apache.org/docs/apache-airflow/stable/executor/index.html) supported by this chart (set by `airflow.executor` value).
-
-Chart Version → <br> Airflow Executor ↓ | `7.X.X` | `8.X.X` | 
---- | --- | ---
-`CeleryExecutor` | ✔️ | ✔️
-`KubernetesExecutor` | ⚠️️ <sub>[1]</sub> | ✔️
-`CeleryKubernetesExecutor` | ❌ | ✔️
-
-<sub>[1] we encourage you to use chart version `8.X.X`, so you can use the `airflow.kubernetesPodTemplate.*` values (requires airflow `1.10.11+`) </sub>
-
-## Helm Values
-
-The following is a summary of the __helm values__ provided by this chart (see full list in [`values.yaml`](https://github.com/airflow-helm/charts/tree/main/charts/airflow/values.yaml) file).
-
-> click the `▶` symbol to expand
-
-<details>
-<summary><code>airflow.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`airflow.legacyCommands` | if we use legacy 1.10 airflow commands | `false`
-`airflow.image.*` | configs for the airflow container image | `<see values.yaml>`
-`airflow.executor` | the airflow executor type to use | `CeleryExecutor`
-`airflow.fernetKey` | the fernet encryption key (sets `AIRFLOW__CORE__FERNET_KEY`) | `7T512UXSSmBOkpWimFHIVb8jK6lfmSAvx4mO6Arehnc=`
-`airflow.webserverSecretKey` | the secret_key for flask (sets `AIRFLOW__WEBSERVER__SECRET_KEY`) | `THIS IS UNSAFE!`
-`airflow.config` | environment variables for airflow configs | `{}`
-`airflow.users` | a list of users to create | `<see values.yaml>`
-`airflow.usersTemplates` | bash-like templates to be used in `airflow.users` | `<see values.yaml>`
-`airflow.usersUpdate` | if we create a Deployment to perpetually sync `airflow.users` | `true`
-`airflow.connections` | a list airflow connections to create | `<see values.yaml>`
-`airflow.connectionsTemplates` | bash-like templates to be used in `airflow.connections` | `<see values.yaml>`
-`airflow.connectionsUpdate` | if we create a Deployment to perpetually sync `airflow.connections` | `true`
-`airflow.variables` | a list airflow variables to create | `<see values.yaml>`
-`airflow.variablesTemplates` | bash-like templates to be used in `airflow.variables` | `<see values.yaml>`
-`airflow.variablesUpdate` | if we create a Deployment to perpetually sync `airflow.variables` | `true`
-`airflow.pools` | a list airflow pools to create | `<see values.yaml>`
-`airflow.poolsUpdate` | if we create a Deployment to perpetually sync `airflow.pools` | `true`
-`airflow.defaultNodeSelector` | default nodeSelector for airflow Pods (is overridden by pod-specific values) | `{}`
-`airflow.defaultAffinity` | default affinity configs for airflow Pods (is overridden by pod-specific values) | `{}`
-`airflow.defaultTolerations` | default toleration configs for airflow Pods (is overridden by pod-specific values) | `[]`
-`airflow.defaultTopologySpreadConstraints` | default topologySpreadConstraints for airflow Pods (is overridden by pod-specific values) | `[]`
-`airflow.defaultSecurityContext` | default securityContext configs for Pods (is overridden by pod-specific values) | `{fsGroup: 0}`
-`airflow.defaultContainerSecurityContext` | default securityContext for Containers in airflow Pods | `{}`
-`airflow.podAnnotations` | extra annotations for airflow Pods | `{}`
-`airflow.extraPipPackages` | extra pip packages to install in airflow Pods | `[]`
-`airflow.protectedPipPackages` | pip packages that are protected from upgrade/downgrade by `extraPipPackages` | `["apache-airflow"]`
-`airflow.extraEnv` | extra environment variables for the airflow Pods | `[]`
-`airflow.extraContainers` | extra containers for the airflow Pods | `[]`
-`airflow.extraInitContainers` | extra init-containers for the airflow Pods | `[]`
-`airflow.extraVolumeMounts` | extra VolumeMounts for the airflow Pods | `[]`
-`airflow.extraVolumes` | extra Volumes for the airflow Pods | `[]`
-`airflow.clusterDomain` | kubernetes cluster domain name | `cluster.local`
-`airflow.initContainers.*` | airflow init-containers | `<see values.yaml>`
-`airflow.localSettings.*` | airflow_local_settings.py | `<see values.yaml>`
-`airflow.kubernetesPodTemplate.*` | pod_template.yaml | `<see values.yaml>`
-`airflow.dbMigrations.*` | db-migrations Deployment | `<see values.yaml>`
-`airflow.sync.*` | Sync Deployments | `<see values.yaml>`
-
-<hr>
-</details>
-
-<details>
-<summary><code>scheduler.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`scheduler.replicas` | the number of scheduler Pods to run | `1`
-`scheduler.resources` | resource requests/limits for the scheduler Pods | `{}`
-`scheduler.nodeSelector` | the nodeSelector configs for the scheduler Pods | `{}`
-`scheduler.affinity` | the affinity configs for the scheduler Pods | `{}`
-`scheduler.tolerations` | the toleration configs for the scheduler Pods | `[]`
-`scheduler.topologySpreadConstraints` | the topologySpreadConstraints configs for the scheduler Pods | `[]`
-`scheduler.securityContext` | the security context for the scheduler Pods | `{}`
-`scheduler.labels` | labels for the scheduler Deployment | `{}`
-`scheduler.podLabels` | Pod labels for the scheduler Deployment | `{}`
-`scheduler.annotations` | annotations for the scheduler Deployment | `{}`
-`scheduler.podAnnotations` | Pod annotations for the scheduler Deployment | `{}`
-`scheduler.safeToEvict` | if we add the annotation: "cluster-autoscaler.kubernetes.io/safe-to-evict" = "true" | `true`
-`scheduler.podDisruptionBudget.*` | configs for the PodDisruptionBudget of the scheduler | `<see values.yaml>`
-`scheduler.logCleanup.*` | configs for the log-cleanup sidecar of the scheduler | `<see values.yaml>`
-`scheduler.numRuns` | the value of the `airflow --num_runs` parameter used to run the airflow scheduler | `-1`
-`scheduler.livenessProbe.*` | configs for the scheduler Pods' liveness probe | `<see values.yaml>`
-`scheduler.extraPipPackages` | extra pip packages to install in the scheduler Pods | `[]`
-`scheduler.extraContainers` | extra containers for the scheduler Pods | `[]`
-`scheduler.extraInitContainers` | extra init-containers for the scheduler Pods | `[]`
-`scheduler.extraVolumeMounts` | extra VolumeMounts for the scheduler Pods | `[]`
-`scheduler.extraVolumes` | extra Volumes for the scheduler Pods | `[]`
-
-</details>
-
-<details>
-<summary><code>web.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`web.webserverConfig.*` | configs to generate webserver_config.py | `<see values.yaml>`
-`web.replicas` | the number of web Pods to run | `1`
-`web.resources` | resource requests/limits for the airflow web pods | `{}`
-`web.nodeSelector` | the number of web Pods to run | `{}`
-`web.affinity` | the affinity configs for the web Pods | `{}`
-`web.tolerations` | the toleration configs for the web Pods | `[]`
-`web.topologySpreadConstraints` | the topologySpreadConstraints configs for the web Pods | `[]`
-`web.securityContext` | the security context for the web Pods | `{}`
-`web.labels` | labels for the web Deployment | `{}`
-`web.podLabels` | Pod labels for the web Deployment | `{}`
-`web.annotations` | annotations for the web Deployment | `{}`
-`web.podAnnotations` | Pod annotations for the web Deployment | `{}`
-`web.safeToEvict` | if we add the annotation: "cluster-autoscaler.kubernetes.io/safe-to-evict" = "true" | `true`
-`web.podDisruptionBudget.*` | configs for the PodDisruptionBudget of the web Deployment | `<see values.yaml>`
-`web.service.*` | configs for the Service of the web pods | `<see values.yaml>`
-`web.readinessProbe.*` | configs for the web Pods' readiness probe | `<see values.yaml>`
-`web.livenessProbe.*` | configs for the web Pods' liveness probe | `<see values.yaml>`
-`web.extraPipPackages` | extra pip packages to install in the web Pods | `[]`
-`web.extraContainers` | extra containers for the web Pods | `[]`
-`web.extraInitContainers` | extra init-containers for the web Pods | `[]`
-`web.extraVolumeMounts` | extra VolumeMounts for the web Pods | `[]`
-`web.extraVolumes` | extra Volumes for the web Pods | `[]`
-
-</details>
-
-<details>
-<summary><code>workers.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`workers.enabled` | if the airflow workers StatefulSet should be deployed | `true`
-`workers.replicas` | the number of workers Pods to run | `1`
-`workers.resources` | resource requests/limits for the airflow worker Pods | `{}`
-`workers.nodeSelector` | the nodeSelector configs for the worker Pods | `{}`
-`workers.affinity` | the affinity configs for the worker Pods | `{}`
-`workers.tolerations` | the toleration configs for the worker Pods | `[]`
-`workers.topologySpreadConstraints` | the topologySpreadConstraints configs for the worker Pods | `[]`
-`workers.securityContext` | the security context for the worker Pods | `{}`
-`workers.labels` | labels for the worker StatefulSet | `{}`
-`workers.podLabels` | Pod labels for the worker StatefulSet | `{}`
-`workers.annotations` | annotations for the worker StatefulSet | `{}`
-`workers.podAnnotations` | Pod annotations for the worker StatefulSet | `{}`
-`workers.safeToEvict` | if we add the annotation: "cluster-autoscaler.kubernetes.io/safe-to-evict" = "true" | `true`
-`workers.podDisruptionBudget.*` | configs for the PodDisruptionBudget of the worker StatefulSet | `<see values.yaml>`
-`workers.autoscaling.*` | configs for the HorizontalPodAutoscaler of the worker Pods | `<see values.yaml>`
-`workers.celery.*` | configs for the celery worker Pods | `<see values.yaml>`
-`workers.terminationPeriod` | how many seconds to wait after SIGTERM before SIGKILL of the celery worker | `60`
-`workers.logCleanup.*` | configs for the log-cleanup sidecar of the worker Pods | `<see values.yaml>`
-`workers.livenessProbe.*` | configs for the worker Pods' liveness probe | `<see values.yaml>`
-`workers.extraPipPackages` | extra pip packages to install in the worker Pods | `[]`
-`workers.extraContainers` | extra containers for the worker Pods | `[]`
-`workers.extraInitContainers` | extra init-containers for the worker Pods | `[]`
-`workers.extraVolumeMounts` | extra VolumeMounts for the worker Pods | `[]`
-`workers.extraVolumes` | extra Volumes for the worker Pods | `[]`
-
-</details>
-
-<details>
-<summary><code>triggerer.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`triggerer.enabled` | if the triggerer should be deployed | `true`
-`triggerer.replicas` | the number of triggerer Pods to run | `1`
-`triggerer.resources` | resource requests/limits for the airflow triggerer Pods | `{}`
-`triggerer.nodeSelector` | the nodeSelector configs for the triggerer Pods | `{}`
-`triggerer.affinity` | the affinity configs for the triggerer Pods | `{}`
-`triggerer.tolerations` | the toleration configs for the triggerer Pods | `[]`
-`triggerer.topologySpreadConstraints` | the topologySpreadConstraints configs for the triggerer Pods | `[]`
-`triggerer.securityContext` | the security context for the triggerer Pods | `{}`
-`triggerer.labels` | labels for the triggerer Deployment | `{}`
-`triggerer.podLabels` | Pod labels for the triggerer Deployment | `{}`
-`triggerer.annotations` | annotations for the triggerer Deployment | `{}`
-`triggerer.podAnnotations` | Pod annotations for the triggerer Deployment | `{}`
-`triggerer.safeToEvict` | if we add the annotation: "cluster-autoscaler.kubernetes.io/safe-to-evict" = "true" | `true`
-`triggerer.podDisruptionBudget.*` | configs for the PodDisruptionBudget of the triggerer Deployment | `<see values.yaml>`
-`triggerer.capacity` | maximum number of triggers each triggerer will run at once (sets `AIRFLOW__TRIGGERER__DEFAULT_CAPACITY`) | `1000`
-`triggerer.livenessProbe.*` | configs for the triggerer Pods' liveness probe | `<see values.yaml>`
-`triggerer.extraPipPackages` | extra pip packages to install in the triggerer Pods | `[]`
-`triggerer.extraContainers` | extra containers for the triggerer Pods | `[]`
-`triggerer.extraInitContainers` | extra init-containers for the triggerer Pods | `[]`
-`triggerer.extraVolumeMounts` | extra VolumeMounts for the triggerer Pods | `[]`
-`triggerer.extraVolumes` | extra Volumes for the triggerer Pods | `[]`
-
-</details>
-
-<details>
-<summary><code>flower.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`flower.enabled` | if the Flower UI should be deployed | `true`
-`flower.resources` | resource requests/limits for the flower Pods | `{}`
-`flower.nodeSelector` | the nodeSelector configs for the flower Pods | `{}`
-`flower.affinity` | the affinity configs for the flower Pods | `{}`
-`flower.tolerations` | the toleration configs for the flower Pods | `[]`
-`flower.topologySpreadConstraints` | the topologySpreadConstraints configs for the flower Pods | `[]`
-`flower.securityContext` | the security context for the flower Pods | `{}`
-`flower.labels` | labels for the flower Deployment | `{}`
-`flower.podLabels` | Pod labels for the flower Deployment | `{}`
-`flower.annotations` | annotations for the flower Deployment | `{}`
-`flower.podAnnotations` | Pod annotations for the flower Deployment | `{}`
-`flower.safeToEvict` | if we add the annotation: "cluster-autoscaler.kubernetes.io/safe-to-evict" = "true" | `true`
-`flower.podDisruptionBudget.*` | configs for the PodDisruptionBudget of the flower Deployment | `<see values.yaml>`
-`flower.basicAuthSecret` | the name of a pre-created secret containing the basic authentication value for flower | `""`
-`flower.basicAuthSecretKey` | the key within `flower.basicAuthSecret` containing the basic authentication string | `""`
-`flower.service.*` | configs for the Service of the flower Pods | `<see values.yaml>`
-`flower.extraPipPackages` | extra pip packages to install in the flower Pods | `[]`
-`flower.extraContainers` | extra containers for the flower Pods | `[]`
-`flower.extraInitContainers` | extra init-containers for the flower Pods | `[]`
-`flower.extraVolumeMounts` | extra VolumeMounts for the flower Pods | `[]`
-`flower.extraVolumes` | extra Volumes for the flower Pods | `[]`
-
-</details>
-
-<details>
-<summary><code>logs.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`logs.path` | the airflow logs folder | `/opt/airflow/logs`
-`logs.persistence.*` | configs for the logs PVC | `<see values.yaml>`
-
-</details>
-
-<details>
-<summary><code>dags.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`dags.path` | the airflow dags folder | `/opt/airflow/dags`
-`dags.persistence.*` | configs for the dags PVC | `<see values.yaml>`
-`dags.gitSync.*` | configs for the git-sync sidecar  | `<see values.yaml>`
-
-</details>
-
-<details>
-<summary><code>ingress.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`ingress.enabled` | if we should deploy Ingress resources | `false`
-`ingress.apiVersion` | the `apiVersion` to use for Ingress resources | `networking.k8s.io/v1`
-`ingress.web.*` | configs for the Ingress of the web Service | `<see values.yaml>`
-`ingress.flower.*` | configs for the Ingress of the flower Service | `<see values.yaml>`
-
-</details>
-
-<details>
-<summary><code>rbac.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`rbac.create` | if Kubernetes RBAC resources are created | `true`
-`rbac.events` | if the created RBAC Role has GET/LIST on Event resources | `true`
-`rbac.secrets` | if the created RBAC Role has GET/LIST/WATCH on Secret resources | `false`
-
-</details>
-
-<details>
-<summary><code>serviceAccount.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`serviceAccount.create` | if a Kubernetes ServiceAccount is created | `true`
-`serviceAccount.name` | the name of the ServiceAccount | `""`
-`serviceAccount.annotations` | annotations for the ServiceAccount | `{}`
-
-</details>
-
-<details>
-<summary><code>extraManifests</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`extraManifests` | a list of extra Kubernetes manifests that will be deployed alongside the chart | `[]`
-
-</details>
-
-<details>
-<summary><code>pgbouncer.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`pgbouncer.enabled` | if the pgbouncer Deployment is created | `true`
-`pgbouncer.image.*` | configs for the pgbouncer container image | `<see values.yaml>`
-`pgbouncer.resources` | resource requests/limits for the pgbouncer Pods | `{}`
-`pgbouncer.nodeSelector` | the nodeSelector configs for the pgbouncer Pods | `{}`
-`pgbouncer.affinity` | the affinity configs for the pgbouncer Pods | `{}`
-`pgbouncer.tolerations` | the toleration configs for the pgbouncer Pods | `[]`
-`pgbouncer.topologySpreadConstraints` | the topologySpreadConstraints configs for the pgbouncer Pods | `[]`
-`pgbouncer.securityContext` | the security context for the pgbouncer Pods | `{}`
-`pgbouncer.labels` | labels for the pgbouncer Deployment | `{}`
-`pgbouncer.podLabels` | Pod labels for the pgbouncer Deployment | `{}`
-`pgbouncer.annotations` | annotations for the pgbouncer Deployment | `{}`
-`pgbouncer.podAnnotations` | Pod annotations for the pgbouncer Deployment | `{}`
-`pgbouncer.safeToEvict` | if we add the annotation: "cluster-autoscaler.kubernetes.io/safe-to-evict" = "true" | `true`
-`pgbouncer.podDisruptionBudget.*` | configs for the PodDisruptionBudget of the pgbouncer | `<see values.yaml>`
-`pgbouncer.livenessProbe.*` | configs for the pgbouncer Pods' liveness probe | `<see values.yaml>`
-`pgbouncer.startupProbe.*` | configs for the pgbouncer Pods' startup probe | `<see values.yaml>`
-`pgbouncer.terminationGracePeriodSeconds` | the maximum number of seconds to wait for queries upon pod termination, before force killing | `120`
-`pgbouncer.authType` | sets pgbouncer config: `auth_type` | `md5`
-`pgbouncer.maxClientConnections` | sets pgbouncer config: `max_client_conn` | `1000`
-`pgbouncer.poolSize` | sets pgbouncer config: `default_pool_size` | `20`
-`pgbouncer.logDisconnections` | sets pgbouncer config: `log_disconnections` | `0`
-`pgbouncer.logConnections` | sets pgbouncer config: `log_connections` | `0`
-`pgbouncer.statsUsers` | sets pgbouncer config: `stats_users` | `""`
-`pgbouncer.clientSSL.*` | ssl configs for: clients -> pgbouncer | `<see values.yaml>`
-`pgbouncer.serverSSL.*` | ssl configs for: pgbouncer -> postgres | `<see values.yaml>`
-
-</details>
-
-<details>
-<summary><code>postgresql.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`postgresql.enabled` | if the `stable/postgresql` chart is used | `true`
-`postgresql.image.*` | configs for the postgres container image | `<see values.yaml>`
-`postgresql.postgresqlDatabase` | the postgres database to use | `airflow`
-`postgresql.postgresqlUsername` | the postgres user to create | `postgres`
-`postgresql.postgresqlPassword` | the postgres user's password | `airflow`
-`postgresql.existingSecret` | the name of a pre-created secret containing the postgres password | `""`
-`postgresql.existingSecretKey` | the key within `postgresql.passwordSecret` containing the password string | `postgresql-password`
-`postgresql.persistence.*` | configs for the PVC of postgresql | `<see values.yaml>`
-`postgresql.master.*` | configs for the postgres StatefulSet | `<see values.yaml>`
-
-</details>
-
-<details>
-<summary><code>externalDatabase.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`externalDatabase.type` | the type of external database | `postgres`
-`externalDatabase.host` | the host of the external database | `localhost`
-`externalDatabase.port` | the port of the external database | `5432`
-`externalDatabase.database` | the database/scheme to use within the the external database | `airflow`
-`externalDatabase.user` | the username for the external database | `airflow`
-`externalDatabase.userSecret` | the name of a pre-created secret containing the external database user | `""`
-`externalDatabase.userSecretKey` | the key within `externalDatabase.userSecret` containing the user string | `postgresql-user`
-`externalDatabase.password` | the password for the external database | `""`
-`externalDatabase.passwordSecret` | the name of a pre-created secret containing the external database password | `""`
-`externalDatabase.passwordSecretKey` | the key within `externalDatabase.passwordSecret` containing the password string | `postgresql-password`
-`externalDatabase.properties` | extra connection-string properties for the external database | `""`
-
-</details>
-
-<details>
-<summary><code>redis.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`redis.enabled` | if the `stable/redis` chart is used | `true`
-`redis.image.*` | configs for the redis container image | `<see values.yaml>`
-`redis.password` | the redis password | `airflow`
-`redis.existingSecret` | the name of a pre-created secret containing the redis password | `""`
-`redis.existingSecretPasswordKey` | the key within `redis.existingSecret` containing the password string | `redis-password`
-`redis.cluster.*` | configs for redis cluster mode | `<see values.yaml>`
-`redis.master.*` | configs for the redis master StatefulSet | `<see values.yaml>`
-`redis.slave.*` | configs for the redis slave StatefulSet | `<see values.yaml>`
-
-</details>
-
-<details>
-<summary><code>externalRedis.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`externalRedis.host` | the host of the external redis | `localhost`
-`externalRedis.port` | the port of the external redis | `6379`
-`externalRedis.databaseNumber` | the database number to use within the external redis | `1`
-`externalRedis.password` | the password for the external redis | `""`
-`externalRedis.passwordSecret` | the name of a pre-created secret containing the external redis password | `""`
-`externalRedis.passwordSecretKey` | the key within `externalRedis.passwordSecret` containing the password string | `redis-password`
-`externalDatabase.properties` | extra connection-string properties for the external redis | `""`
-
-</details>
-
-<details>
-<summary><code>serviceMonitor.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`serviceMonitor.enabled` | if ServiceMonitor resources should be deployed | `false`
-`serviceMonitor.selector` | labels for ServiceMonitor, so that Prometheus can select it | `{ prometheus: "kube-prometheus" }`
-`serviceMonitor.path` | the ServiceMonitor web endpoint path | `/admin/metrics`
-`serviceMonitor.interval` | the ServiceMonitor web endpoint path | `30s`
-
-</details>
-
-<details>
-<summary><code>prometheusRule.*</code></summary>
-
-Parameter | Description | Default
---- | --- | ---
-`prometheusRule.enabled` | if the PrometheusRule resources should be deployed | `false`
-`prometheusRule.additionalLabels` | labels for PrometheusRule, so that Prometheus can select it | `{}`
-`prometheusRule.groups` | alerting rules for Prometheus | `[]`
-
-</details>
+# ⚠️ THIS CHART HAS MOVED ⚠️
+
+### New location: https://github.com/airflow-helm/charts/tree/main/charts/airflow
+
+---
+---
+
+# Airflow Helm Chart
+
+[Airflow](https://airflow.apache.org/) is a platform to programmatically author, schedule and monitor workflows.
+
+## Installation
+
+__(Helm 2) install the Airflow Helm Chart:__
+```bash
+helm install stable/airflow \
+  --name "airflow" \
+  --version "X.X.X" \
+  --namespace "airflow" \
+  --values ./custom-values.yaml
+```
+
+__(Helm 3) install the Airflow Helm Chart:__
+```bash
+helm repo add stable https://kubernetes-charts.storage.googleapis.com
+helm repo update
+
+helm install "airflow" stable/airflow \
+  --version "X.X.X" \
+  --namespace "airflow" \
+  --values ./custom-values.yaml
+```
+
+__Get the status of the Airflow Helm Chart:__
+```bash
+helm status "airflow"
+```
+
+__Uninstall the Airflow Helm Chart:__
+```bash
+helm delete "airflow"
+```
+
+__Run bash commands in the Airflow Webserver Pod:__
+```bash
+# create an interactive bash session in the Webserver Pod
+# use this bash session for commands like: `airflow create_user`
+kubectl exec \
+  -it \
+  --namespace airflow \
+  --container airflow-web \
+  Deployment/airflow-web \
+  /bin/bash
+```
+
+---
+
+## Upgrade Steps
+
+Chart version numbers: [Chart.yaml](Chart.yaml) or [Artifact Hub](https://artifacthub.io/packages/helm/helm-stable/airflow)
+
+- [v7.12.X → v7.13.0](UPGRADE.md#v712x--v7130)
+- [v7.11.X → v7.12.0](UPGRADE.md#v711x--v7120)
+- [v7.10.X → v7.11.0](UPGRADE.md#v710x--v7110)
+- [v7.9.X → v7.10.0](UPGRADE.md#v79x--v7100)
+- [v7.8.X → v7.9.0](UPGRADE.md#v78x--v790)
+- [v7.7.X → v7.8.0](UPGRADE.md#v77x--v780)
+- [v7.6.X → v7.7.0](UPGRADE.md#v76x--v770)
+- [v7.5.X → v7.6.0](UPGRADE.md#v75x--v760)
+- [v7.4.X → v7.5.0](UPGRADE.md#v74x--v750)
+- [v7.3.X → v7.4.0](UPGRADE.md#v73x--v740)
+- [v7.2.X → v7.3.0](UPGRADE.md#v72x--v730)
+- [v7.1.X → v7.2.0](UPGRADE.md#v71x--v720)
+- [v7.0.X → v7.1.0](UPGRADE.md#v70x--v710)
+- [v6.X.X → v7.0.0](UPGRADE.md#v6xx--v700)
+
+---
+
+## Example Helm Values
+
+Here are some starting points for your `custom-values.yaml`:
+
+| Name | File | Description |
+| --- | --- | --- |
+| (CeleryExecutor) Minimal | [examples/minikube/custom-values.yaml](examples/minikube/custom-values.yaml) | a __non-production__ starting point |
+| (CeleryExecutor) Google Cloud | [examples/google-gke/custom-values.yaml](examples/google-gke/custom-values.yaml) | a __production__ starting point for GKE on Google Cloud |
+
+---
+
+## Docs (Airflow) - Configs
+
+While we don't expose the `airflow.cfg` directly, you can use [environment variables](https://airflow.apache.org/docs/stable/howto/set-config.html) to set Airflow configs.
+
+We expose the `airflow.config` value to make this easier:
+```yaml
+airflow:
+  config:
+    ## Security
+    AIRFLOW__CORE__SECURE_MODE: "True"
+    AIRFLOW__API__AUTH_BACKEND: "airflow.api.auth.backend.deny_all"
+    AIRFLOW__WEBSERVER__EXPOSE_CONFIG: "False"
+    AIRFLOW__WEBSERVER__RBAC: "False"
+
+    ## DAGS
+    AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL: "30"
+    AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+
+    ## Email (SMTP)
+    AIRFLOW__EMAIL__EMAIL_BACKEND: "airflow.utils.email.send_email_smtp"
+    AIRFLOW__SMTP__SMTP_HOST: "smtpmail.example.com"
+    AIRFLOW__SMTP__SMTP_STARTTLS: "False"
+    AIRFLOW__SMTP__SMTP_SSL: "False"
+    AIRFLOW__SMTP__SMTP_PORT: "25"
+    AIRFLOW__SMTP__SMTP_MAIL_FROM: "admin@example.com"
+
+    ## Disable noisy "Handling signal: ttou" Gunicorn log messages
+    GUNICORN_CMD_ARGS: "--log-level WARNING"
+```
+
+## Docs (Airflow) - Connections
+
+### Option 1 - Values.yaml
+
+We expose the `scheduler.connections` value to specify [Airflow Connections](https://airflow.apache.org/docs/stable/concepts.html#connections), which will be automatically imported by the airflow-scheduler when it starts up.
+
+By default, we will delete and re-create connections each time the airflow-scheduler restarts.
+(If you want to manually modify a connection in the WebUI, you should disable this behaviour by setting `scheduler.refreshConnections` to `false`)
+
+For example, to add a connection called `my_aws`:
+```yaml
+scheduler:
+  connections:
+    - id: my_aws
+      type: aws
+      extra: |
+        {
+          "aws_access_key_id": "XXXXXXXX",
+          "aws_secret_access_key": "XXXXXXXX",
+          "region_name":"eu-central-1"
+        }
+```
+
+### Option 2 - Kubernetes Secret
+
+If you don't want to store connections in your `values.yaml`, use `scheduler.existingSecretConnections` to specify the name of an existing Kubernetes Secret containing an `add-connections.sh` script.
+Note, your script will be run EACH TIME the airflow-scheduler Pod restarts, and `scheduler.connections` will not longer work.
+
+Here is an example Secret you might create:
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-airflow-connections
+type: Opaque
+stringData:
+  add-connections.sh: |
+    #!/usr/bin/env bash
+
+    # remove any existing connection
+    airflow connections --delete \
+      --conn_id "my_aws"
+  
+    # re-add your custom connection
+    airflow connections --add \
+      --conn_id "my_aws" \
+      --conn_type "aws" \
+      --conn_extra "{\"aws_access_key_id\": \"XXXXXXXX\", \"aws_secret_access_key\": \"XXXXXXXX\", \"region_name\":\"eu-central-1\"}"
+```
+
+## Docs (Airflow) - Variables
+
+We expose the `scheduler.variables` value to specify [Airflow Variables](https://airflow.apache.org/docs/stable/concepts.html#variables), which will be automatically imported by the airflow-scheduler when it starts up.
+
+For example, to specify a variable called `environment`:
+```yaml
+scheduler:
+  variables: |
+    { "environment": "dev" }
+```
+
+## Docs (Airflow) - Pools
+
+We expose the `scheduler.pools` value to specify [Airflow Pools](https://airflow.apache.org/docs/stable/concepts.html#pools), which will be automatically imported by the Airflow scheduler when it starts up.
+
+For example, to create a pool called `example`:
+```yaml
+scheduler:
+  pools: |
+    {
+      "example": {
+        "description": "This is an example pool with 2 slots.",
+        "slots": 2
+      }
+    }
+```
+
+## Docs (Airflow) - Environment Variables
+
+We expose the `airflow.extraEnv` value to mount extra environment variables, this can be used to pass sensitive configs to Airflow.
+
+For example, passing a Fernet key and LDAP password, (the `airflow` and `ldap` Kubernetes Secrets must already exist):
+```yaml
+airflow:
+  extraEnv:
+    - name: AIRFLOW__CORE__FERNET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: airflow
+          key: fernet-key
+    - name: AIRFLOW__LDAP__BIND_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: ldap
+          key: password
+```
+
+## Docs (Airflow) - ConfigMaps
+
+We expose the `airflow.extraConfigmapMounts` value to mount extra Kubernetes ConfigMaps.
+
+For example, a `webserver_config.py` file:
+```yaml
+airflow:
+  extraConfigmapMounts:
+    - name: my-webserver-config
+      mountPath: /opt/airflow/webserver_config.py
+      configMap: my-airflow-webserver-config
+      readOnly: true
+      subPath: webserver_config.py
+```
+
+To create the `my-airflow-webserver-config` ConfigMap, you could use:
+```bash
+kubectl create configmap \
+  my-airflow-webserver-config \
+  --from-file=webserver_config.py \
+  --namespace airflow
+```
+
+## Docs (Airflow) - Install Python Packages
+
+We expose the `airflow.extraPipPackages` and `web.extraPipPackages` values to install Python Pip packages, these will work with any pip package that you can install with `pip install XXXX`.
+
+For example, enabling the airflow `airflow-exporter` package:
+```yaml
+airflow:
+  extraPipPackages:
+    - "airflow-exporter==1.3.1"
+```
+
+For example, you may be using `flask_oauthlib` to integrate with Okta/Google/etc for authorizing WebUI users:
+```yaml
+web:
+  extraPipPackages:
+    - "apache-airflow[google_auth]==1.10.12"
+```
+
+---
+
+## Docs (Kubernetes) - Ingress
+
+This chart provides an optional Kubernetes Ingress resource, for accessing airflow-webserver and airflow-flower outside of the cluster.
+
+### URL Prefix:
+
+If you already have something hosted at the root of your domain, you might want to place airflow under a URL-prefix:
+- http://example.com/airflow/
+- http://example.com/airflow/flower
+
+In this example, would set these values:
+```yaml
+web:
+  baseUrl: "http://example.com/airflow/"
+
+flower:
+  urlPrefix: "/airflow/flower"
+
+ingress:
+  web:
+    path: "/airflow"
+
+  flower:
+    path: "/airflow/flower"
+```
+
+### Custom Paths:
+
+We expose the `ingress.web.precedingPaths` and `ingress.web.succeedingPaths` values, which are __before__ and __after__ the default path respectively.
+
+A common use-case is enabling https with the `aws-alb-ingress-controller` [ssl-redirect](https://kubernetes-sigs.github.io/aws-alb-ingress-controller/guide/tasks/ssl_redirect/), which needs a redirect path to be hit before the airflow-webserver one.
+
+You would set the values of `precedingPaths` as the following:
+```yaml
+ingress:
+  web:
+    precedingPaths:
+      - path: "/*"
+        serviceName: "ssl-redirect"
+        servicePort: "use-annotation"
+```
+
+## Docs (Kubernetes) - Worker Autoscaling
+
+We use a Kubernetes StatefulSet for the Celery workers, this allows the webserver to requests logs from each workers individually, with a fixed DNS name.
+
+Celery workers can be scaled using the [Horizontal Pod Autoscaler](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/).
+To enable autoscaling, you must set `workers.autoscaling.enabled=true`, then provide `workers.autoscaling.maxReplicas`, and `workers.replicas` for the minimum amount.
+
+Assume every task a worker executes consumes approximately `200Mi` memory, that means memory is a good metric for utilisation monitoring.
+For a worker pod you can calculate it: `WORKER_CONCURRENCY * 200Mi`, so for `10 tasks` a worker will consume `~2Gi` of memory.
+
+In the following config if a worker consumes `80%` of `2Gi` (which will happen if it runs 9-10 tasks at the same time), an autoscaling event will be triggered, and a new worker will be added.
+If you have many tasks in a queue, Kubernetes will keep adding workers until maxReplicas reached, in this case `16`.
+```yaml
+workers:
+  # the initial/minimum number of workers
+  replicas: 2
+
+  resources:
+    requests:
+      memory: "2Gi"
+
+  podDisruptionBudget:
+    enabled: true
+    ## prevents losing more than 20% of current worker task slots in a voluntary disruption
+    maxUnavailable: "20%"
+
+  autoscaling:
+    enabled: true
+    maxReplicas: 16
+    metrics:
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 80
+
+  celery:
+    instances: 10
+
+    ## wait at most 9min for running tasks to complete before SIGTERM
+    ## WARNING: 
+    ##  - some cluster-autoscaler (GKE) will not respect graceful 
+    ##    termination periods over 10min
+    gracefullTermination: true
+    gracefullTerminationPeriod: 540
+
+  ## how many seconds (after the 9min) to wait before SIGKILL
+  terminationPeriod: 60
+
+dags:
+  git:
+    gitSync:
+      resources:
+        requests:
+          ## IMPORTANT! for autoscaling to work
+          memory: "64Mi"
+```
+
+## Docs (Kubernetes) - Worker Secrets
+
+We expose the `workers.secrets` value to allow mounting secrets at `{workers.secretsDir}/<secret-name>` in airflow-worker Pods.
+
+For example, mounting password Secrets:
+```yaml
+workers:
+  secretsDir: /var/airflow/secrets
+  secrets:
+    - redshift-user
+    - redshift-password
+    - elasticsearch-user
+    - elasticsearch-password
+```
+
+With the above configuration, you could read the `redshift-user` password from within a DAG or Python function using:
+```python
+import os
+from pathlib import Path
+
+def get_secret(secret_name):
+    secrets_dir = Path('/var/airflow/secrets')
+    secret_path = secrets_dir / secret_name
+    assert secret_path.exists(), f'could not find {secret_name} at {secret_path}'
+    secret_data = secret_path.read_text().strip()
+    return secret_data
+
+redshift_user = get_secret('redshift-user')
+```
+
+To create the `redshift-user` Secret, you could use:
+```bash
+kubectl create secret generic \
+  redshift-user \
+  --from-literal=redshift-user=MY_REDSHIFT_USERNAME \
+  --namespace airflow
+```
+
+## Docs (Kubernetes) - Additional Manifests
+
+We expose the `extraManifests.[]` value to add custom Kubernetes manifests to the chart.
+
+For example, adding a `BackendConfig` resource for GKE:
+```yaml
+extraManifests:
+  - apiVersion: cloud.google.com/v1beta1
+    kind: BackendConfig
+    metadata:
+      name: "{{ .Release.Name }}-test"
+    spec:
+      securityPolicy:
+        name: "gcp-cloud-armor-policy-test"
+```
+
+---
+
+## Docs (Database) - DB Initialization 
+
+If the value `scheduler.initdb` is set to `true` (this is the default), the airflow-scheduler container will run `airflow initdb` as part of its startup script.
+
+If the value `scheduler.preinitdb` is set to `true`, then we ALSO RUN `airflow initdb` in an init-container (retrying 5 times).
+This is unusually NOT necessary unless your synced DAGs include custom database hooks that prevent `airflow initdb` from running.
+
+## Docs (Database) - Passwords
+
+PostgreSQL is the default database in this chart, because we use insecure username/password combinations by default, you should create secure credentials before installing the Helm chart.
+
+Example bash command to create the required Kubernetes Secrets:
+```bash
+# set postgress password
+kubectl create secret generic \
+  airflow-postgresql \
+  --from-literal=postgresql-password=$(openssl rand -base64 13) \
+  --namespace airflow
+
+# set redis password
+kubectl create secret generic \
+  airflow-redis \
+  --from-literal=redis-password=$(openssl rand -base64 13) \
+  --namespace airflow
+```
+
+Example `values.yaml`, to use those secrets:
+```yaml
+postgresql:
+  existingSecret: airflow-postgresql
+
+redis:
+  existingSecret: airflow-redis
+```
+
+## Docs (Database) - External Database
+
+While this chart comes with an embedded [stable/postgresql](https://github.com/helm/charts/tree/master/stable/postgresql), this is NOT SUITABLE for production.
+You should make use of an external `mysql` or `postgres` database, for example, one that is managed by your cloud provider.
+
+### Option 1 - Postgres
+
+Example values for an external Postgres database, with an existing `airflow_cluster1` database:
+```yaml
+externalDatabase:
+  type: postgres
+  host: postgres.example.org
+  port: 5432
+  database: airflow_cluster1
+  user: airflow_cluster1
+  passwordSecret: "airflow-cluster1-postgres-password"
+  passwordSecretKey: "postgresql-password"
+```
+
+### Option 2 - MySQL
+
+__WARNING:__ Airflow requires that `explicit_defaults_for_timestamp=1` in your MySQL instance, [see here](https://airflow.apache.org/docs/stable/howto/initialize-database.html)
+
+Example values for an external MySQL database, with an existing `airflow_cluster1` database:
+```yaml
+externalDatabase:
+  type: mysql
+  host: mysql.example.org
+  port: 3306
+  database: airflow_cluster1
+  user: airflow_cluster1
+  passwordSecret: "airflow-cluster1-mysql-password"
+  passwordSecretKey: "mysql-password"
+```
+
+---
+
+## Docs (Other) - Log Persistence
+
+By default, logs from the airflow-web/scheduler/worker are written within the Docker container's filesystem, therefore any restart of the pod will wipe the logs.
+For a production deployment, you will likely want to persist the logs.
+
+### Option 1 - S3/GCS bucket (Recommended)
+
+You must give airflow credentials for it to read/write on the remote bucket, this can be achieved with `AIRFLOW__CORE__REMOTE_LOG_CONN_ID`, or by using something like [Workload Identity (GKE)](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity), or [IAM Roles for Service Accounts (EKS)](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html). 
+
+Example, using `AIRFLOW__CORE__REMOTE_LOG_CONN_ID` (can be used with AWS too):
+```yaml
+airflow:
+  config:
+    AIRFLOW__CORE__REMOTE_LOGGING: "True"
+    AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER: "gs://<<MY-BUCKET-NAME>>/airflow/logs"
+    AIRFLOW__CORE__REMOTE_LOG_CONN_ID: "google_cloud_airflow"
+
+scheduler:
+  connections:
+    - id: google_cloud_airflow
+      type: google_cloud_platform
+      extra: |-
+        {
+         "extra__google_cloud_platform__num_retries": "5",
+         "extra__google_cloud_platform__keyfile_dict": "{...}"
+        }
+```
+    
+Example, using [Workload Identity (GKE)](https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity):
+```yaml
+airflow:
+  config:
+    AIRFLOW__CORE__REMOTE_LOGGING: "True"
+    AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER: "gs://<<MY-BUCKET-NAME>>/airflow/logs"
+    AIRFLOW__CORE__REMOTE_LOG_CONN_ID: "google_cloud_default"
+
+serviceAccount:
+  annotations:
+    iam.gke.io/gcp-service-account: "<<MY-ROLE-NAME>>@<<MY-PROJECT-NAME>>.iam.gserviceaccount.com"
+```
+
+Example, using [IAM Roles for Service Accounts (EKS)](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html):
+```yaml
+airflow:
+  config:
+    AIRFLOW__CORE__REMOTE_LOGGING: "True"
+    AIRFLOW__CORE__REMOTE_BASE_LOG_FOLDER: "s3://<<MY-BUCKET-NAME>>/airflow/logs"
+    AIRFLOW__CORE__REMOTE_LOG_CONN_ID: "aws_default"
+
+scheduler:
+  securityContext:
+    fsGroup: 65534
+
+web:
+  securityContext:
+    fsGroup: 65534
+
+workers:
+  securityContext:
+    fsGroup: 65534
+
+serviceAccount:
+  annotations:
+    eks.amazonaws.com/role-arn: "arn:aws:iam::XXXXXXXXXX:role/<<MY-ROLE-NAME>>"
+```
+
+### Option 2 - Kubernetes PVC
+
+```yaml
+logs:
+  persistence:
+    enabled: true
+```
+
+## Docs (Other) - Service Monitor
+
+The service monitor is something introduced by the [CoresOS Prometheus Operator](https://github.com/coreos/prometheus-operator).
+To be able to expose metrics to prometheus you need install a plugin, this can be added to the docker image.
+A good one is [epoch8/airflow-exporter](https://github.com/epoch8/airflow-exporter), which exposes dag and task based metrics from Airflow.
+
+For more information, see the `serviceMonitor` section of `values.yaml`.
+
+---
+
+## Docs (Other) - DAG Storage
+
+### Option 1 - Git-Sync Sidecar (Recommended)
+
+This method places a git sidecar in each worker/scheduler/web Kubernetes Pod, that perpetually syncs your git repo into the dag folder every `dags.git.gitSync.refreshTime` seconds.
+
+__WARNING:__  In the `dags.git.secret` the `known_hosts` file is present to reduce the possibility of a man-in-the-middle attack.
+However, if you want to implicitly trust all repo host signatures set `dags.git.sshKeyscan` to `true`.
+
+```yaml
+dags:
+  git:
+    url: ssh://git@repo.example.com/example.git
+    repoHost: repo.example.com
+    secret: airflow-git-keys
+    privateKeyName: id_rsa
+
+    gitSync:
+      enabled: true
+      refreshTime: 60
+```
+
+You can create the `dags.git.secret` from your local `~/.ssh` folder using:
+```bash
+kubectl create secret generic \
+  airflow-git-keys \
+  --from-file=id_rsa=~/.ssh/id_rsa \
+  --from-file=id_rsa.pub=~/.ssh/id_rsa.pub \
+  --from-file=known_hosts=~/.ssh/known_hosts \
+  --namespace airflow
+```
+
+### Option 2 - Mount a Shared Persistent Volume
+
+This method stores your DAGs in a Kubernetes Persistent Volume Claim (PVC), you must use some external system to ensure this volume has your latest DAGs.
+For example, you could use your CI/CD pipeline system to preform a sync as changes are pushed to a git repo.
+
+Since ALL Pods MUST HAVE the same collection of DAG files, it is recommended to create just one PVC that is shared.
+To share a PVC with multiple Pods, the PVC needs to have `accessMode` set to `ReadOnlyMany` or `ReadWriteMany` (Note: different StorageClass support different [access modes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes)).
+If you are using Kubernetes on a public cloud, a persistent volume controller is likely built in:
+[Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html),
+[Azure AKS](https://docs.microsoft.com/en-us/azure/aks/azure-files-dynamic-pv),
+[Google GKE](https://cloud.google.com/kubernetes-engine/docs/concepts/persistent-volumes).
+
+For example, to use the storage class called `default`:
+```yaml
+dags:
+  persistence:
+    enabled: true
+    storageClass: default
+    accessMode: ReadOnlyMany
+    size: 1Gi
+```
+
+### Option 2a - Single PVC for DAGs & Logs
+
+You may want to store DAGs and logs on the same volume and configure Airflow to use subdirectories for them.
+
+__WARNING:__ you must use a PVC which supports `accessMode: ReadWriteMany`
+
+Here's an approach that achieves this:
+- Configure `airflow.extraVolume` and `airflow.extraVolumeMount` to put a volume at `/opt/airflow/efs`
+- Configure `dags.persistence.enabled` and `logs.persistence.enabled` to be `false`
+- Configure `dags.path` to be `/opt/airflow/efs/dags`
+- Configure `logs.path` to be `/opt/airflow/efs/logs`
+
+## Docs (Other) - requirements.txt
+
+We expose the `dags.installRequirements` value to enable installing any `requirements.txt` found at the root of your `dags.path` folder as airflow-workers start.
+
+__WARNING__: if you update the `requirements.txt`, you will have to restart your airflow-workers for changes to take effect
+
+__NOTE__: you might also want to consider using `airflow.extraPipPackages`
+
+---
+
+## Helm Chart Values
+
+Full documentation can be found in the comments of the `values.yaml` file, but a high level overview is provided here.
+
+__Global Values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `airflow.image.*` | configs for the docker image of the web/scheduler/worker | `<see values.yaml>` |
+| `airflow.executor` | the airflow executor type to use | `CeleryExecutor` |
+| `airflow.fernetKey` | the fernet key used to encrypt the connections/variables in the database | `7T512UXSSmBOkpWimFHIVb8jK6lfmSAvx4mO6Arehnc=` |
+| `airflow.config` | environment variables for the web/scheduler/worker pods (for airflow configs) | `{}` |
+| `airflow.podAnnotations` | extra annotations for the web/scheduler/worker/flower Pods | `{}` |
+| `airflow.extraEnv` | extra environment variables for the web/scheduler/worker/flower Pods | `[]` |
+| `airflow.extraConfigmapMounts` | extra configMap volumeMounts for the web/scheduler/worker/flower Pods | `[]` |
+| `airflow.extraContainers` | extra containers for the web/scheduler/worker Pods | `[]` |
+| `airflow.extraPipPackages` | extra pip packages to install in the web/scheduler/worker Pods | `[]` |
+| `airflow.extraVolumeMounts` | extra volumeMounts for the web/scheduler/worker Pods | `[]` |
+| `airflow.extraVolumes` | extra volumes for the web/scheduler/worker Pods | `[]` |
+
+__Airflow Scheduler values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `scheduler.resources` | resource requests/limits for the scheduler Pods | `{}` |
+| `scheduler.nodeSelector` | the nodeSelector configs for the scheduler Pods | `{}` |
+| `scheduler.affinity` | the affinity configs for the scheduler Pods | `{}` |
+| `scheduler.tolerations` | the toleration configs for the scheduler Pods | `[]` |
+| `scheduler.securityContext` | the security context for the scheduler Pods | `{}` |
+| `scheduler.labels` | labels for the scheduler Deployment | `{}` |
+| `scheduler.podLabels` | Pod labels for the scheduler Deployment | `{}` |
+| `scheduler.annotations` | annotations for the scheduler Deployment | `{}` |
+| `scheduler.podAnnotations` | Pod Annotations for the scheduler Deployment | `{}` |
+| `scheduler.safeToEvict` | if we should tell Kubernetes Autoscaler that its safe to evict these Pods | `true` |
+| `scheduler.podDisruptionBudget.*` | configs for the PodDisruptionBudget of the scheduler | `<see values.yaml>` |
+| `scheduler.connections` | custom airflow connections for the airflow scheduler | `[]` |
+| `scheduler.refreshConnections` | if `scheduler.connections` are deleted and re-added after each scheduler restart | `true` |
+| `scheduler.existingSecretConnections` | the name of an existing Secret containing an `add-connections.sh` script to run on scheduler start | `""` |
+| `scheduler.variables` | custom airflow variables for the airflow scheduler | `"{}"` |
+| `scheduler.pools` | custom airflow pools for the airflow scheduler | `"{}"` |
+| `scheduler.numRuns` | the value of the `airflow --num_runs` parameter used to run the airflow scheduler | `-1` |
+| `scheduler.initdb` | if we run `airflow initdb` when the scheduler starts | `true` |
+| `scheduler.preinitdb` | if we run `airflow initdb` inside a special initContainer | `false` |
+| `scheduler.initialStartupDelay` | the number of seconds to wait (in bash) before starting the scheduler container | `0` |
+| `scheduler.livenessProbe.*` | configs for the scheduler liveness probe | `<see values.yaml>` |
+| `scheduler.extraInitContainers` | extra init containers to run before the scheduler pod | `[]` |
+
+__Airflow Webserver Values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `web.resources` | resource requests/limits for the airflow web pods | `{}` |
+| `web.replicas` | the number of web Pods to run | `1` |
+| `web.nodeSelector` | the number of web Pods to run | `{}` |
+| `web.affinity` | the affinity configs for the web Pods | `{}` |
+| `web.tolerations` | the toleration configs for the web Pods | `[]` |
+| `web.securityContext` | the security context for the web Pods | `{}` |
+| `web.labels` | labels for the web Deployment | `{}` |
+| `web.podLabels` | Pod labels for the web Deployment | `{}` |
+| `web.annotations` | annotations for the web Deployment | `{}` |
+| `web.podAnnotations` | Pod annotations for the web Deployment | `{}` |
+| `web.safeToEvict` | if we should tell Kubernetes Autoscaler that its safe to evict these Pods | `true` |
+| `web.podDisruptionBudget.*` | configs for the PodDisruptionBudget of the web Deployment | `<see values.yaml>` |
+| `web.service.*` | configs for the Service of the web pods | `<see values.yaml>` |
+| `web.baseUrl` | sets `AIRFLOW__WEBSERVER__BASE_URL` | `http://localhost:8080` |
+| `web.serializeDAGs` | sets `AIRFLOW__CORE__STORE_SERIALIZED_DAGS` | `false` |
+| `web.extraPipPackages` | extra pip packages to install in the web container | `[]` |
+| `web.initialStartupDelay` | the number of seconds to wait (in bash) before starting the web container | `0` |
+| `web.minReadySeconds` | the number of seconds to wait before declaring a new Pod available | `5` |
+| `web.readinessProbe.*` | configs for the web Service readiness probe | `<see values.yaml>` |
+| `web.livenessProbe.*` | configs for the web Service liveness probe | `<see values.yaml>` |
+| `web.secretsDir` | the directory in which to mount secrets on web containers | `/var/airflow/secrets` |
+| `web.secrets` | the names of existing Kubernetes Secrets to mount as files at `{workers.secretsDir}/<secret_name>/<keys_in_secret>` | `[]` |
+| `web.secretsMap` | the name of an existing Kubernetes Secret to mount as files to `{web.secretsDir}/<keys_in_secret>` | `""` |
+
+__Airflow Worker Values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `workers.enabled` | if the airflow workers StatefulSet should be deployed | `true` |
+| `workers.resources` | resource requests/limits for the airflow worker Pods | `{}` |
+| `workers.replicas` | the number of workers Pods to run | `1` |
+| `workers.nodeSelector` | the nodeSelector configs for the worker Pods | `{}` |
+| `workers.affinity` | the affinity configs for the worker Pods | `{}` |
+| `workers.tolerations` | the toleration configs for the worker Pods | `[]` |
+| `workers.securityContext` | the security context for the worker Pods | `{}` |
+| `workers.labels` | labels for the worker StatefulSet | `{}` |
+| `workers.podLabels` | Pod labels for the worker StatefulSet | `{}` |
+| `workers.annotations` | annotations for the worker StatefulSet | `{}` |
+| `workers.podAnnotations` | Pod annotations for the worker StatefulSet | `{}` |
+| `workers.safeToEvict` | if we should tell Kubernetes Autoscaler that its safe to evict these Pods | `true` |
+| `workers.podDisruptionBudget.*` | configs for the PodDisruptionBudget of the worker StatefulSet | `<see values.yaml>` |
+| `workers.autoscaling.*` | configs for the HorizontalPodAutoscaler of the worker Pods | `<see values.yaml>` |
+| `workers.initialStartupDelay` | the number of seconds to wait (in bash) before starting each worker container | `0` |
+| `workers.celery.*` | configs for the celery worker Pods | `<see values.yaml>` |
+| `workers.terminationPeriod` | how many seconds to wait after SIGTERM before SIGKILL of the celery worker | `60` |
+| `workers.secretsDir` | directory in which to mount secrets on worker containers | `/var/airflow/secrets` |
+| `workers.secrets` | the names of existing Kubernetes Secrets to mount as files at `{workers.secretsDir}/<secret_name>/<keys_in_secret>` | `[]` |
+| `workers.secretsMap` | the name of an existing Kubernetes Secret to mount as files to `{web.secretsDir}/<keys_in_secret>` | `""` |
+
+__Airflow Flower Values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `flower.enabled` | if the Flower UI should be deployed | `true` |
+| `flower.resources` | resource requests/limits for the flower Pods | `{}` |
+| `flower.affinity` | the affinity configs for the flower Pods | `{}` |
+| `flower.tolerations` | the toleration configs for the flower Pods | `[]` |
+| `flower.securityContext` | the security context for the flower Pods | `{}` |
+| `flower.labels` | labels for the flower Deployment | `{}` |
+| `flower.podLabels` | Pod labels for the flower Deployment | `{}` |
+| `flower.annotations` | annotations for the flower Deployment | `{}` |
+| `flower.podAnnotations` | Pod annotations for the flower Deployment | `{}` |
+| `flower.safeToEvict` | if we should tell Kubernetes Autoscaler that its safe to evict these Pods | `true` |
+| `flower.podDisruptionBudget.*` | configs for the PodDisruptionBudget of the flower Deployment | `<see values.yaml>` |
+| `flower.oauthDomains` | the value of the flower `--auth` argument | `""` |
+| `flower.basicAuthSecret` | the name of a pre-created secret containing the basic authentication value for flower | `""` |
+| `flower.basicAuthSecretKey` | the key within `flower.basicAuthSecret` containing the basic authentication string | `""` |
+| `flower.urlPrefix` | sets `AIRFLOW__CELERY__FLOWER_URL_PREFIX` | `""` |
+| `flower.service.*` | configs for the Service of the flower Pods | `<see values.yaml>` |
+| `flower.initialStartupDelay` | the number of seconds to wait (in bash) before starting the flower container | `0` |
+| `flower.minReadySeconds` | the number of seconds to wait before declaring a new Pod available | `5` |
+| `flower.extraConfigmapMounts` | extra ConfigMaps to mount on the flower Pods | `[]` |
+
+__Airflow Logs Values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `logs.path` | the airflow logs folder | `/opt/airflow/logs` |
+| `logs.persistence.*` | configs for the logs PVC | `<see values.yaml>` |
+
+__Airflow DAGs Values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `dags.path` | the airflow dags folder | `/opt/airflow/dags` |
+| `dags.doNotPickle` | whether to disable pickling dags from the scheduler to workers | `false` |
+| `dags.installRequirements` | install any Python `requirements.txt` at the root of `dags.path` automatically | `false` |
+| `dags.persistence.*` | configs for the dags PVC | `<see values.yaml>` |
+| `dags.git.*` | configs for the DAG git repository & sync container | `<see values.yaml>` |
+| `dags.initContainer.*` | configs for the git-clone container | `<see values.yaml>` |
+
+__Airflow Ingress Values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `ingress.enabled` | if we should deploy Ingress resources | `false` |
+| `ingress.web.*` | configs for the Ingress of the web Service | `<see values.yaml>` |
+| `ingress.flower.*` | configs for the Ingress of the flower Service | `<see values.yaml>` |
+
+__Airflow Kubernetes Values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `rbac.create` | if Kubernetes RBAC resources are created | `true` |
+| `rbac.events` | if the created RBAR role has GET/LIST access to Event resources | `false` |
+| `serviceAccount.create` | if a Kubernetes ServiceAccount is created | `true` |
+| `serviceAccount.name` | the name of the ServiceAccount | `""` |
+| `serviceAccount.annotations` | annotations for the ServiceAccount | `{}` |
+| `extraManifests` | additional Kubernetes manifests to include with this chart | `[]` |
+
+__Airflow Database (Internal PostgreSQL) Values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `postgresql.enabled` | if the `stable/postgresql` chart is used | `true` |
+| `postgresql.postgresqlDatabase` | the postgres database to use | `airflow` |
+| `postgresql.postgresqlUsername` | the postgres user to create | `postgres` |
+| `postgresql.postgresqlPassword` | the postgres user's password | `airflow` |
+| `postgresql.existingSecret` | the name of a pre-created secret containing the postgres password | `""` |
+| `postgresql.existingSecretKey` | the key within `postgresql.passwordSecret` containing the password string | `postgresql-password` |
+| `postgresql.persistence.*` | configs for the PVC of postgresql | `<see values.yaml>` |
+| `postgresql.master.*` | configs for the postgres StatefulSet | `<see values.yaml>` |
+
+__Airflow Database (External) Values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `externalDatabase.type` | the type of external database: {mysql,postgres} | `postgres` |
+| `externalDatabase.host` | the host of the external database | `localhost` |
+| `externalDatabase.port` | the port of the external database | `5432` |
+| `externalDatabase.database` | the database/scheme to use within the the external database | `airflow` |
+| `externalDatabase.user` | the user of the external database | `airflow` |
+| `externalDatabase.passwordSecret` | the name of a pre-created secret containing the external database password | `""` |
+| `externalDatabase.passwordSecretKey` | the key within `externalDatabase.passwordSecret` containing the password string | `postgresql-password` |
+| `externalDatabase.properties` | the connection properties e.g. "?sslmode=require" | `""` |
+
+__Airflow Redis (Internal) Values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `redis.enabled` | if the `stable/redis` chart is used | `true` |
+| `redis.password` | the redis password | `airflow` |
+| `redis.existingSecret` | the name of a pre-created secret containing the redis password | `""` |
+| `redis.existingSecretPasswordKey` | the key within `redis.existingSecret` containing the password string | `redis-password` |
+| `redis.cluster.*` | configs for redis cluster mode | `<see values.yaml>` |
+| `redis.master.*` | configs for the redis master | `<see values.yaml>` |
+| `redis.slave.*` | configs for the redis slaves | `<see values.yaml>` |
+
+__Airflow Redis (External) Values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `externalRedis.host` | the host of the external redis | `localhost` |
+| `externalRedis.port` | the port of the external redis | `6379` |
+| `externalRedis.databaseNumber` | the database number to use within the the external redis | `1` |
+| `externalRedis.passwordSecret` | the name of a pre-created secret containing the external redis password | `""` |
+| `externalRedis.passwordSecretKey` | the key within `externalRedis.passwordSecret` containing the password string | `redis-password` |
+
+__Airflow Prometheus Values:__
+
+| Parameter | Description | Default |
+| --- | --- | --- |
+| `serviceMonitor.enabled` | if the ServiceMonitor resources should be deployed | `false` |
+| `serviceMonitor.selector` | labels for ServiceMonitor, so that Prometheus can select it | `{ prometheus: "kube-prometheus" }` |
+| `serviceMonitor.path` | the ServiceMonitor web endpoint path | `/admin/metrics` |
+| `serviceMonitor.interval` | the ServiceMonitor web endpoint path | `30s` |
+| `prometheusRule.enabled` | if the PrometheusRule resources should be deployed | `false` |
+| `prometheusRule.additionalLabels` | labels for PrometheusRule, so that Prometheus can select it | `{}` |
+| `prometheusRule.groups` | alerting rules for Prometheus | `[]` |

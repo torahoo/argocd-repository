@@ -1,5 +1,5 @@
 {{- if .Values.scheduler.podDisruptionBudget.enabled }}
-apiVersion: {{ .Values.scheduler.podDisruptionBudget.apiVersion }}
+apiVersion: policy/v1
 kind: PodDisruptionBudget
 metadata:
   name: {{ include "airflow.fullname" . }}-scheduler
