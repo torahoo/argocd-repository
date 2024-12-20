@@ -652,12 +652,16 @@ scheduler:
     apiVersion: policy/v1
 
     ## the maximum unavailable pods/percentage for the scheduler
-    ##
-    maxUnavailable: ""
+    ## add 100% [2024-12-20 14:11]
+    maxUnavailable: "100%"
 
     ## the minimum available pods/percentage for the scheduler
     ##
     minAvailable: ""
+
+  ## if `scheduler.connections` are deleted and re-added after each scheduler restart
+  ## add 100% [2024-12-20 14:11]
+  refreshConnections: true
 
   ## configs for the log-cleanup sidecar of the scheduler
   ## - helps prevent excessive log buildup by regularly deleting old files
@@ -690,12 +694,12 @@ scheduler:
   ## - "unhealthy" means the SchedulerJob has not had a heartbeat for
   ##   AIRFLOW__SCHEDULER__SCHEDULER_HEALTH_CHECK_THRESHOLD seconds
   ## - `periodSeconds` x `failureThreshold` = max seconds a scheduler can be in an "unhealthy" state
-  ##
+  ## initialDelaySeconds changed 10 -> 300 etc... [2024-12-20 14:13]
   livenessProbe:
     enabled: true
-    initialDelaySeconds: 10
+    initialDelaySeconds: 300
     periodSeconds: 30
-    timeoutSeconds: 60
+    # timeoutSeconds: 60
     failureThreshold: 5
 
     ## configs for an additional check that ensures tasks are being created by the scheduler
@@ -1508,7 +1512,7 @@ dags:
     ## the access mode of the PVC
     ## - [WARNING] must be "ReadOnlyMany" or "ReadWriteMany" otherwise airflow pods will fail to start
     ##
-    accessMode: ReadOnlyMany
+    accessMode: ReadWriteMany
 
     ## the size of PVC to request
     ##
@@ -1546,13 +1550,13 @@ dags:
     ##   # ssh git repo
     ##   repo: "git@github.com:USERNAME/REPOSITORY.git"
     ##
-    repo: ""
+    repo: "git@github.com:torahoo/airflow_test_dags.git"
 
     ## the sub-path within your repo where dags are located
     ## - only dags under this path within your repo will be seen by airflow,
     ##   (note, the full repo will still be cloned)
     ##
-    repoSubPath: ""
+    repoSubPath: "dags"
 
     ## the git branch to check out
     ##
@@ -1585,19 +1589,19 @@ dags:
 
     ## the key in `dags.gitSync.httpSecret` with your git username
     ##
-    httpSecretUsernameKey: username
+    # httpSecretUsernameKey: username
 
     ## the key in `dags.gitSync.httpSecret` with your git password/token
     ##
-    httpSecretPasswordKey: password
+    # httpSecretPasswordKey: password
 
     ## the name of a pre-created Secret with git ssh credentials
     ##
-    sshSecret: ""
+    sshSecret: "airflow-ssh-git-secret"
 
     ## the key in `dags.gitSync.sshSecret` with your ssh-key file
     ##
-    sshSecretKey: id_rsa
+    # sshSecretKey: id_rsa
 
     ## the string value of a "known_hosts" file (for SSH only)
     ## - [WARNING] known_hosts verification will be disabled if left empty, making you more
