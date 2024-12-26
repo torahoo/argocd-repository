@@ -29,7 +29,7 @@ spec:
             - name: GIT_SYNC_SSH
               value: "true"
             - name: GIT_SSH_KEY_FILE
-              value: "/etc/git-secret/id_rsa"
+              value: "/etc/git-secret/airflow_secret"
           volumeMounts:
             - name: git-secret
               mountPath: /etc/git-secret
