@@ -29,7 +29,7 @@ spec:
             - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
               valueFrom:
                 secretKeyRef:
-                  name: airflow-config  # Secret 이름
+                  name: airflow-test-secret-key  # Secret 이름
                   key: sql_alchemy_conn
             # CeleryExecutor의 결과 백엔드
             - name: AIRFLOW__CELERY__RESULT_BACKEND
