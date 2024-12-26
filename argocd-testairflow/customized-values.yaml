@@ -1,0 +1,124 @@
+######################################################################
+# [2024-12-26] Airflow - Customizing Configs by KTY                  #
+######################################################################
+
+aifrlow:
+    image:
+        repository: apache/airflow
+        tag: 2.8.4-python3.9
+
+    # https://airflow.apache.org/docs/helm-chart/stable/index.html?source=post_page-----5bc5878f0c58--------------------------------
+    # When installing the chart using Argo CD, Flux, Rancher or Terraform, 
+    # you MUST set the four following values, 
+    # or your application will not start as the migrations will not be run
+    createUserJob:
+        useHelmHooks: false
+        applyCustomEnv: false
+    migrateDatabaseJob:
+        useHelmHooks: false
+        applyCustomEnv: false
+    ## the airflow executor type to use
+    executor: KubernetesExecutor
+
+    ## the fernet encryption key (sets `AIRFLOW__CORE__FERNET_KEY`)
+    ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/security/set-fernet-key.md
+    ## [WARNING] change from default value to ensure security
+    fernetKey: "7T512UXSSmBOkpWimFHIVb8jK6lfmSAvx4mO6Arehnc="
+
+    ## a list of users to create
+    ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/security/airflow-users.md
+    users:
+        - username: airflow
+          password: airflow
+          role: Admin
+          email: admin@example.com
+          firstName: airflow
+          lastName: admin
+
+    ## configs generating the `pod_template.yaml` file for `AIRFLOW__KUBERNETES__POD_TEMPLATE_FILE`
+    ## [NOTE] the `dags.gitSync` values will create a git-sync init-container in the pod
+    ## [NOTE] the `airflow.extraPipPackages` will NOT be installed
+    kubernetesPodTemplate:
+
+        ## the full content of the pod-template file (as a string)
+        ## [NOTE] all other `kubernetesPodTemplate.*` are disabled when this is set
+        stringOverride: ""
+
+        ## resource requests/limits for the Pod template "base" container
+        ## [SPEC] https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#resourcerequirements-v1-core
+        resources: {}
+
+###################################
+## Airflow log
+###################################    
+logs:
+    persistence: 
+        enabled: True
+        existingClaim: pvc-poc-apache-airflow-log
+        size: 1Gi
+
+
+###################################
+## COMPONENT | Airflow Webserver
+###################################
+web:
+  ## the number of web Pods to run
+  replicas: 1
+
+  ## resource requests/limits for the web Pods
+  ## [SPEC] https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.29/#resourcerequirements-v1-core
+  resources: {}
+
+  ## configs for the Service of the web Pods
+  service:
+    type: ClusterIP
+    externalPort: 8088
+
+  ## configs generating the `webserver_config.py` file
+  ## [FAQ] https://github.com/airflow-helm/charts/blob/main/charts/airflow/docs/faq/configuration/airflow-configs.md#webserver_configpy
+  webserverConfig:
+    ## the full content of the `webserver_config.py` file (as a string)
+    stringOverride: |
+      from airflow import configuration as conf
+      from flask_appbuilder.security.manager import AUTH_DB
+      
+      # the SQLAlchemy connection string
+      SQLALCHEMY_DATABASE_URI = conf.get("core", "SQL_ALCHEMY_CONN")
+      
+      # use embedded DB for auth
+      AUTH_TYPE = AUTH_DB
+
+    ## the name of a Secret containing a `webserver_config.py` key
+    existingSecret: ""
+
+# Worker 설정
+worker:
+  replicas: 2
+  persistence:
+    size: 2Gi
+
+# Redis 설정
+redis:
+  enabled: False
+
+# PostgreSQL 설정
+postgresql:
+  enabled: true
+  postgresqlUsername: airflow
+  postgresqlPassword: airflow
+  postgresqlDatabase: airflow
+
+###################################
+# Airflow - DAGs Configs
+###################################
+dags:
+    gitSync:
+        enabled: true
+        repo: git@github.com:torahoo/airflow_test_dags.git
+        branch: master
+        rev: HEAD
+        depth: 1
+        subPath: 'dags'
+        sshKeySecret: airflow-ssh-git-secret
+        containerName: git-sync
+        uid: 65533
