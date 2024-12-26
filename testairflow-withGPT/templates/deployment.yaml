@@ -71,4 +71,4 @@ spec:
         # Git-Sync SSH Secret
         - name: git-secret
           secret:
-            secretName: airflow_secret  # Git-Sync가 사용할 Secret 이름
+            secretName: airflow-test-secret-key  # Git-Sync가 사용할 Secret 이름
