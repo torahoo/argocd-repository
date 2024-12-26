@@ -25,17 +25,21 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: AIRFLOW__CORE__EXECUTOR
-              value: CeleryExecutor
+            # SQLAlchemy 연결 정보 (PostgreSQL)
             - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
               valueFrom:
                 secretKeyRef:
-                  name: airflow-config
+                  name: airflow-config  # Secret 이름
                   key: sql_alchemy_conn
+            # CeleryExecutor의 결과 백엔드
             - name: AIRFLOW__CELERY__RESULT_BACKEND
               value: "db+postgresql://airflow:airflow@postgresql/airflow"
+            # CeleryExecutor 브로커 URL
             - name: AIRFLOW__CELERY__BROKER_URL
               value: "redis://redis:6379/0"
+            # 추가 설정: DAGs 경로
+            - name: AIRFLOW__CORE__DAGS_FOLDER
+              value: /opt/airflow/dags
           volumeMounts:
             - name: airflow-dags
               mountPath: /opt/airflow/dags
@@ -45,9 +49,9 @@ spec:
           image: k8s.gcr.io/git-sync/git-sync:v3.3.0
           env:
             - name: GIT_SYNC_REPO
-              value: "{{ .Values.dags.gitSync.repo }}"
+              value: "git@github.com:your-repo/dags.git"
             - name: GIT_SYNC_BRANCH
-              value: "{{ .Values.dags.gitSync.branch }}"
+              value: "main"
             - name: GIT_SYNC_SSH
               value: "true"
             - name: GIT_SSH_KEY_FILE
@@ -59,10 +63,12 @@ spec:
             - name: airflow-dags
               mountPath: /dags
 
-      # 공통 볼륨 설정
+      # 볼륨 설정
       volumes:
+        # DAGs 저장소
         - name: airflow-dags
           emptyDir: {}
+        # Git-Sync SSH Secret
         - name: git-secret
           secret:
-            secretName: "{{ .Values.dags.gitSync.sshSecret.existingSecretName }}"
+            secretName: airflow_secret  # Git-Sync가 사용할 Secret 이름
