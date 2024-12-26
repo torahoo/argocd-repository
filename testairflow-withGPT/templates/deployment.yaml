@@ -17,25 +17,25 @@ spec:
       labels:
         app: airflow
         component: webserver
-    spec:
-      containers:
-        - name: git-sync
-          image: k8s.gcr.io/git-sync/git-sync:v3.3.0
-          env:
-            - name: GIT_SYNC_REPO
-              value: "{{ .Values.dags.gitSync.repo }}"
-            - name: GIT_SYNC_BRANCH
-              value: "{{ .Values.dags.gitSync.branch }}"
-            - name: GIT_SYNC_SSH
-              value: "true"
-            - name: GIT_SSH_KEY_FILE
-              value: "/etc/git-secret/id_rsa"
-          volumeMounts:
-            - name: git-secret
-              mountPath: /etc/git-secret
-              readOnly: true
-      volumes:
+spec:
+  containers:
+    - name: git-sync
+      image: k8s.gcr.io/git-sync/git-sync:v3.3.0
+      env:
+        - name: GIT_SYNC_REPO
+          value: "{{ .Values.dags.gitSync.repo }}"
+        - name: GIT_SYNC_BRANCH
+          value: "{{ .Values.dags.gitSync.branch }}"
+        - name: GIT_SYNC_SSH
+          value: "true"
+        - name: GIT_SSH_KEY_FILE
+          value: "/etc/git-secret/id_rsa"
+      volumeMounts:
         - name: git-secret
-          secret:
-            secretName: "{{ .Values.dags.gitSync.sshSecret.existingSecretName }}"
+          mountPath: /etc/git-secret
+          readOnly: true
+  volumes:
+    - name: git-secret
+      secret:
+        secretName: "{{ .Values.dags.gitSync.sshSecret.existingSecretName }}"
   
