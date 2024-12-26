@@ -7,7 +7,7 @@ metadata:
     app: airflow
     component: webserver
 spec:
-  replicas: {{ .Values.web.replicas }}
+  replicas: 1
   selector:
     matchLabels:
       app: airflow
@@ -17,25 +17,52 @@ spec:
       labels:
         app: airflow
         component: webserver
-spec:
-  containers:
-    - name: git-sync
-      image: k8s.gcr.io/git-sync/git-sync:v3.3.0
-      env:
-        - name: GIT_SYNC_REPO
-          value: "{{ .Values.dags.gitSync.repo }}"
-        - name: GIT_SYNC_BRANCH
-          value: "{{ .Values.dags.gitSync.branch }}"
-        - name: GIT_SYNC_SSH
-          value: "true"
-        - name: GIT_SSH_KEY_FILE
-          value: "/etc/git-secret/id_rsa"
-      volumeMounts:
+    spec:
+      containers:
+        # Airflow Webserver 컨테이너
+        - name: webserver
+          image: apache/airflow:2.5.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: AIRFLOW__CORE__EXECUTOR
+              value: CeleryExecutor
+            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
+              valueFrom:
+                secretKeyRef:
+                  name: airflow-config
+                  key: sql_alchemy_conn
+            - name: AIRFLOW__CELERY__RESULT_BACKEND
+              value: "db+postgresql://airflow:airflow@postgresql/airflow"
+            - name: AIRFLOW__CELERY__BROKER_URL
+              value: "redis://redis:6379/0"
+          volumeMounts:
+            - name: airflow-dags
+              mountPath: /opt/airflow/dags
+
+        # Git-Sync 컨테이너
+        - name: git-sync
+          image: k8s.gcr.io/git-sync/git-sync:v3.3.0
+          env:
+            - name: GIT_SYNC_REPO
+              value: "{{ .Values.dags.gitSync.repo }}"
+            - name: GIT_SYNC_BRANCH
+              value: "{{ .Values.dags.gitSync.branch }}"
+            - name: GIT_SYNC_SSH
+              value: "true"
+            - name: GIT_SSH_KEY_FILE
+              value: "/etc/git-secret/id_rsa"
+          volumeMounts:
+            - name: git-secret
+              mountPath: /etc/git-secret
+              readOnly: true
+            - name: airflow-dags
+              mountPath: /dags
+
+      # 공통 볼륨 설정
+      volumes:
+        - name: airflow-dags
+          emptyDir: {}
         - name: git-secret
-          mountPath: /etc/git-secret
-          readOnly: true
-  volumes:
-    - name: git-secret
-      secret:
-        secretName: "{{ .Values.dags.gitSync.sshSecret.existingSecretName }}"
-  
+          secret:
+            secretName: "{{ .Values.dags.gitSync.sshSecret.existingSecretName }}"
