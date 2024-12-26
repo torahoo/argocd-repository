@@ -1,0 +1,55 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: airflow-webserver
+  namespace: airflow  # 배포할 네임스페이스
+  labels:
+    app: airflow
+    component: webserver
+spec:
+  type: ClusterIP  # 내부에서만 접근하려면 ClusterIP
+  ports:
+    - port: 8088
+      targetPort: 8088
+      protocol: TCP
+  selector:
+    app: airflow
+    component: webserver
+
+-- --
+apiVersion: v1
+kind: Service
+metadata:
+  name: airflow-scheduler
+  namespace: airflow
+  labels:
+    app: airflow
+    component: scheduler
+spec:
+  type: ClusterIP  # Scheduler는 내부 통신만 필요
+  ports:
+    - port: 8793
+      targetPort: 8793
+      protocol: TCP
+  selector:
+    app: airflow
+    component: scheduler
+
+-- --
+apiVersion: v1
+kind: Service
+metadata:
+  name: airflow-worker
+  namespace: airflow
+  labels:
+    app: airflow
+    component: worker
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8793
+      targetPort: 8793
+      protocol: TCP
+  selector:
+    app: airflow
+    component: worker
