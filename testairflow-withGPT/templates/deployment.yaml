@@ -19,16 +19,6 @@ spec:
         component: webserver
     spec:
       containers:
-        - name: webserver
-          image: "{{ .Values.airflow.image.repository }}:{{ .Values.airflow.image.tag }}"
-          env:
-            - name: AIRFLOW__CORE__EXECUTOR
-              value: "{{ .Values.airflow.executor }}"
-            - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
-              value: "{{ .Values.airflow.config.AIRFLOW__CORE__SQL_ALCHEMY_CONN }}"
-          volumeMounts:
-            - name: airflow-dags
-              mountPath: /opt/airflow/dags
         - name: git-sync
           image: k8s.gcr.io/git-sync/git-sync:v3.3.0
           env:
@@ -39,16 +29,13 @@ spec:
             - name: GIT_SYNC_SSH
               value: "true"
             - name: GIT_SSH_KEY_FILE
-              value: "/etc/git-secret/airflow_secret"
+              value: "/etc/git-secret/id_rsa"
           volumeMounts:
             - name: git-secret
               mountPath: /etc/git-secret
               readOnly: true
-            - name: airflow-dags
-              mountPath: /dags
       volumes:
-        - name: airflow-dags
-          emptyDir: {}
         - name: git-secret
           secret:
-            secretName: airflow-ssh-git-secret
+            secretName: "{{ .Values.dags.gitSync.sshSecret.existingSecretName }}"
+  
