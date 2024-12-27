@@ -23,13 +23,13 @@ spec:
         - name: webserver
           image: apache/airflow:2.5.0
           ports:
-            - containerPort: 8080
+            - containerPort: 8088
           env:
             # SQLAlchemy 연결 정보 (PostgreSQL)
             - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
               valueFrom:
                 secretKeyRef:
-                  name: airflow-test-secret-key  # Secret 이름
+                  name: airflow-test-secret-key
                   key: sql_alchemy_conn
             # CeleryExecutor의 결과 백엔드
             - name: AIRFLOW__CELERY__RESULT_BACKEND
