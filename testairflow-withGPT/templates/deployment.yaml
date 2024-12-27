@@ -56,6 +56,8 @@ spec:
               value: "true"
             - name: GIT_SSH_KEY_FILE
               value: "/etc/git-secret/id_rsa"
+            - name: GIT_KNOWN_HOSTS_FILE
+              value: "/etc/git-secret/known_hosts"
           volumeMounts:
             - name: git-secret
               mountPath: /etc/git-secret
