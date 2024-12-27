@@ -49,7 +49,7 @@ spec:
           image: k8s.gcr.io/git-sync/git-sync:v3.3.0
           env:
             - name: GIT_SYNC_REPO
-              value: "git@github.com:your-repo/dags.git"
+              value: "git@github.com:torahoo/airflow_test_dags.git"
             - name: GIT_SYNC_BRANCH
               value: "main"
             - name: GIT_SYNC_SSH
