@@ -56,8 +56,8 @@ spec:
               value: "true"
             - name: GIT_SSH_KEY_FILE
               value: "/etc/git-secret/ssh-privatekey"
-            {% comment %} - name: GIT_KNOWN_HOSTS_FILE
-              value: "/etc/git-secret/known_hosts" {% endcomment %}
+            # - name: GIT_KNOWN_HOSTS_FILE
+            #  value: "/etc/git-secret/known_hosts"
           volumeMounts:
             - name: git-secret
               mountPath: /etc/git-secret
@@ -73,4 +73,4 @@ spec:
         # Git-Sync SSH Secret
         - name: git-secret
           secret:
-            secretName: ssh-airflow  # Git-Sync가 사용할 Secret 이름
+            secretName: airflow-test-secret-key  # Git-Sync가 사용할 Secret 이름
