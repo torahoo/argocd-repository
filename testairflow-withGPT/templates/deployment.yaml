@@ -49,15 +49,15 @@ spec:
           image: k8s.gcr.io/git-sync/git-sync:v3.3.0
           env:
             - name: GIT_SYNC_REPO
-              value: "git@github.com:torahoo/airflow_test_dags.git"
+              value: "git@10.255.232.136:kube/airflow-dag.git"
             - name: GIT_SYNC_BRANCH
               value: "main"
             - name: GIT_SYNC_SSH
               value: "true"
             - name: GIT_SSH_KEY_FILE
-              value: "/etc/git-secret/id_rsa"
-            - name: GIT_KNOWN_HOSTS_FILE
-              value: "/etc/git-secret/known_hosts"
+              value: "/etc/git-secret/ssh-privatekey"
+            {% comment %} - name: GIT_KNOWN_HOSTS_FILE
+              value: "/etc/git-secret/known_hosts" {% endcomment %}
           volumeMounts:
             - name: git-secret
               mountPath: /etc/git-secret
@@ -73,4 +73,4 @@ spec:
         # Git-Sync SSH Secret
         - name: git-secret
           secret:
-            secretName: airflow-test-secret-key  # Git-Sync가 사용할 Secret 이름
+            secretName: ssh-airflow  # Git-Sync가 사용할 Secret 이름
