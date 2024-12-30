@@ -27,10 +27,7 @@ spec:
           env:
             # SQLAlchemy 연결 정보 (PostgreSQL)
             - name: AIRFLOW__CORE__SQL_ALCHEMY_CONN
-              valueFrom:
-                secretKeyRef:
-                  name: airflow-test-secret-key
-                  key: sql_alchemy_conn
+              value: "postgresql+psycopg2://airflow:airflow@postgresql/airflow"
             # CeleryExecutor의 결과 백엔드
             - name: AIRFLOW__CELERY__RESULT_BACKEND
               value: "db+postgresql://airflow:airflow@postgresql/airflow"
@@ -47,6 +44,8 @@ spec:
         # Git-Sync 컨테이너
         - name: git-sync
           image: k8s.gcr.io/git-sync/git-sync:v3.3.0
+          ports:
+            - containerPort: 2222
           env:
             - name: GIT_SYNC_REPO
               value: "git@10.255.232.136:kube/airflow-dag.git"
