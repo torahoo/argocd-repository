@@ -30,7 +30,7 @@ spec:
       {{- if and (eq .Values.web.service.type "NodePort") (.Values.web.service.nodePort.http) }}
       nodePort: {{ .Values.web.service.nodePort.http }}
       {{- end }}
-      targetPort: 18088
+      targetPort: 8080
   {{- if eq .Values.web.service.type "LoadBalancer" }}
   {{- if .Values.web.service.loadBalancerIP }}
   loadBalancerIP: {{ .Values.web.service.loadBalancerIP | quote }}
