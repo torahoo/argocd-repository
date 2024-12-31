@@ -77,7 +77,18 @@ spec:
       securityContext:
         {{- toYaml .Values.web.securityContext | nindent 8 }}
       {{- end }}
-
+      #  initContainers:
+      #    - name: git-clone-init
+      #      image: alpine/git:latest
+      #      command: ["/bin/sh", "-c"]
+      #      args:
+      #        - |
+      #            git clone http://huniverse:gbslqjtm1%21@10.255.232.136/kube/airflow-dag.git /git
+      #            chown -R 50000:50000 /git
+      #            chmod -R 755 /git
+      #      volumeMounts:
+      #        - name: git-clone-volume
+      #          mountPath: /git
       {{- if and ( .Values.dags.initContainer.enabled ) ( not .Values.web.serializeDAGs ) }}
       initContainers:
         - name: git-clone
@@ -160,6 +171,8 @@ spec:
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
           volumeMounts:
+            - name: git-clone-volume
+              mountPath: /opt/airflow/dags
             - name: scripts
               mountPath: /home/airflow/scripts
             {{- if .Values.web.secretsMap }}
