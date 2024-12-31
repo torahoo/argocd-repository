@@ -160,6 +160,8 @@ spec:
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
           volumeMounts:
+            - name: git-clone-volume
+              mountPath: /opt/airflow/dags
             - name: scripts
               mountPath: /home/airflow/scripts
             {{- if .Values.web.secretsMap }}
@@ -306,3 +308,5 @@ spec:
         {{- if .Values.airflow.extraVolumes }}
         {{- toYaml .Values.airflow.extraVolumes | nindent 8 }}
         {{- end }}
+        - name: git-clone-volume
+          emptyDir: {}
