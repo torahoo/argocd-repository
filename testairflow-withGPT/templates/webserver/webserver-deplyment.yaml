@@ -160,8 +160,6 @@ spec:
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
           volumeMounts:
-            - name: git-clone-volume
-              mountPath: {{ $.Values.dags.path }} 
             - name: scripts
               mountPath: /home/airflow/scripts
             {{- if .Values.web.secretsMap }}
