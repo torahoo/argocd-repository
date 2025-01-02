@@ -410,9 +410,9 @@ data:
     user: postgres
     pass: postgres
     protocol: postgresql
-    host: airflow-postgresql.airflow
+    host: postgres-0.postgres-service.huni-comn.svc.cluster.local
     port: 5432
-    db: postgres
+    db: airflow
     sslmode: disable
   # resultBackendConnection defaults to the same database as metadataConnection
   resultBackendConnection: ~
