@@ -410,7 +410,7 @@ data:
     user: postgres
     pass: postgres
     protocol: postgresql
-    host: //postgres-0.postgres-service.huni-comn.svc.cluster.local
+    host: postgres-0.postgres-service.huni-comn.svc.cluster.local
     port: 5432
     db: airflow
     sslmode: disable
