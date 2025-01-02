@@ -412,7 +412,7 @@ data:
     protocol: postgresql
     host: airflow-postgresql.airflow
     port: 5432
-    db: airflow
+    db: postgres
     sslmode: disable
   # resultBackendConnection defaults to the same database as metadataConnection
   resultBackendConnection: ~
