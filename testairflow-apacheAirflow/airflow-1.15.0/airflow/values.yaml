@@ -410,7 +410,7 @@ data:
     user: postgres
     pass: postgres
     protocol: postgresql
-    host: ~
+    host: localhost
     port: 5432
     db: postgres
     sslmode: disable
