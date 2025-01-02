@@ -171,6 +171,8 @@ spec:
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
           volumeMounts:
+            - name: git-clone-secret
+              mountPath: /keys
             - name: scripts
               mountPath: /home/airflow/scripts
             {{- if .Values.web.secretsMap }}
