@@ -20,19 +20,25 @@ data:
     mkdir -p ~/.ssh/
 
     {{- if .Values.dags.git.sshKeyscan }}
+    echo "<<git-clone.sh>> ssh-keyscan -p ${REPO_PORT} ${REPO_HOST}"
     ssh-keyscan -p $REPO_PORT $REPO_HOST >> ~/.ssh/known_hosts
     {{- end }}
 
     {{- if .Values.dags.git.secret }}
+    echo "<<git-clone.sh>> cp -rL /keys/* ~/.ssh/"
     cp -rL /keys/* ~/.ssh/
+    echo "<<git-clone.sh>> chmod 600 ~/.ssh/*"
     chmod 600 ~/.ssh/*
+    echo "<<git-clone.sh>> Host ${REPO_HOST}\n  Port ${REPO_PORT}\n  IdentityFile ~/.ssh/${PRIVATE_KEY}"
     echo -e "Host $REPO_HOST\n  Port $REPO_PORT\n  IdentityFile ~/.ssh/$PRIVATE_KEY" > ~/.ssh/config
     {{- end }}
 
     # ensure the git directory is empty, so we can safely clone
     if [ -d "$DIR" ]; then
+      echo "<<git-clone.sh>> if [ -d "${DIR}" ]; then rm -rf $( find ${DIR} -mindepth 1 )"
       rm -rf $( find $DIR -mindepth 1 )
     fi
+    echo "<<git-clone.sh>> git clone ${REPO} -b ${REF} ${DIR}"
     git clone $REPO -b $REF $DIR
     
 
@@ -46,22 +52,29 @@ data:
     PRIVATE_KEY=$6
     SYNC_TIME=$7
 
+    echo "<<git-sync.sh>> mkdir -p ~/.ssh/"
     mkdir -p ~/.ssh/
 
     {{- if .Values.dags.git.sshKeyscan }}
+    echo "<<git-sync.sh>> ssh-keyscan -p ${REPO_PORT} ${REPO_HOST}"
     ssh-keyscan -p $REPO_PORT $REPO_HOST >> ~/.ssh/known_hosts
     {{- end }}
 
     {{- if .Values.dags.git.secret }}
+    echo "<<git-sync.sh>> cp -rL /keys/* ~/.ssh/"
     cp -rL /keys/* ~/.ssh/
+    echo "<<git-sync.sh>> chmod 600 ~/.ssh/*"
     chmod 600 ~/.ssh/*
+    echo "<<git-sync.sh>> Host ${REPO_HOST}\n  Port ${REPO_PORT}\n  IdentityFile ~/.ssh/${PRIVATE_KEY}"
     echo -e "Host $REPO_HOST\n  Port $REPO_PORT\n  IdentityFile ~/.ssh/$PRIVATE_KEY" > ~/.ssh/config
     {{- end }}
 
     {{- if and (.Values.dags.git.gitSync.enabled) (not .Values.dags.initContainer.enabled) }}
     if [ -d "$DIR" ]; then
+      echo "<<git-sync.sh>> if [ -d "${DIR}" ]; then rm -rf $( find ${DIR} -mindepth 1 )"
       rm -rf $( find $DIR -mindepth 1 )
     fi
+    echo "<<git-sync.sh>> git clone ${REPO} -b ${REF} ${DIR}"
     git clone $REPO -b $REF $DIR
     {{- end }}
 
