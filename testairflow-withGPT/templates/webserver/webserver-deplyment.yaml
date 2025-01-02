@@ -270,6 +270,10 @@ spec:
         {{- toYaml .Values.airflow.extraContainers | nindent 8 }}
         {{- end }}
       volumes:
+        - name: git-clone-secret
+          secret:
+            secretName: {{ .Values.dags.git.secret }}
+            defaultMode: 0700
         - name: scripts
           configMap:
             name: {{ include "airflow.fullname" . }}-scripts
