@@ -33,9 +33,7 @@ data:
     if [ -d "$DIR" ]; then
       rm -rf $( find $DIR -mindepth 1 )
     fi
-    # git clone $REPO -b $REF $DIR
-    echo "git clone git@10.255.232.136:kube/airflow-dag.git -b main /git"
-    git clone git@10.255.232.136:kube/airflow-dag.git -b main /git
+    git clone $REPO -b $REF $DIR
     
 
   git-sync.sh: |
