@@ -1068,10 +1068,8 @@ createUserJob:
   priorityClassName: ~
   # In case you need to disable the helm hooks that create the jobs after install.
   # Disable this if you are using ArgoCD for example
-  # [UPDATE] default setting : useHelmHooks: true
-  useHelmHooks: false
-  # [UPDATE] default setting : applyCustomEnv: true
-  applyCustomEnv: false
+  useHelmHooks: true
+  applyCustomEnv: true
 
   env: []
 
@@ -1173,10 +1171,8 @@ migrateDatabaseJob:
   priorityClassName: ~
   # In case you need to disable the helm hooks that create the jobs after install.
   # Disable this if you are using ArgoCD for example
-  # [UPDATE] default setting : useHelmHooks: true
-  useHelmHooks: false
-  # [UPDATE] default setting : applyCustomEnv: true
-  applyCustomEnv: false
+  useHelmHooks: true
+  applyCustomEnv: true
 
 # rpcServer support is experimental / dev purpose only and will later be renamed
 _rpcServer:
