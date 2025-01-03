@@ -139,7 +139,7 @@ labels: {}
 # Ingress configuration
 ingress:
   # Enable all ingress resources (deprecated - use ingress.web.enabled and ingress.flower.enabled)
-  enabled: false
+  enabled: ~
 
   # Configs for the Ingress of the web Service
   web:
@@ -410,9 +410,9 @@ data:
     user: postgres
     pass: postgres
     protocol: postgresql
-    host: postgres-0.postgres-service.huni-comn.svc.cluster.local
+    host: ~
     port: 5432
-    db: airflow
+    db: postgres
     sslmode: disable
   # resultBackendConnection defaults to the same database as metadataConnection
   resultBackendConnection: ~
@@ -631,7 +631,7 @@ workers:
     #   whenDeleted: Delete
     #   whenScaled: Delete
     # Volume size for worker StatefulSet
-    size: 10Gi
+    size: 100Gi
     # If using a custom storageClass, pass name ref to all statefulSets here
     storageClassName:
     # Execute init container to chown log directory.
@@ -2060,7 +2060,7 @@ statsd:
 # PgBouncer settings
 pgbouncer:
   # Enable PgBouncer
-  enabled: true
+  enabled: false
   # Number of PgBouncer replicas to run in Deployment
   replicas: 1
   # Max number of old replicasets to retain
@@ -2456,7 +2456,7 @@ cleanup:
 # Configuration for postgresql subchart
 # Not recommended for production
 postgresql:
-  enabled: false
+  enabled: true
   auth:
     enablePostgresUser: true
     postgresPassword: postgres
