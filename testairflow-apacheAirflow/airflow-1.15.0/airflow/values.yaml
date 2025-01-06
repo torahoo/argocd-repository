@@ -2459,6 +2459,7 @@ cleanup:
 
 # Configuration for postgresql subchart
 # Not recommended for production
+# [UPDATE] : if use this, you need to add username and password
 postgresql:
   enabled: true
   auth:
