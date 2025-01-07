@@ -81,7 +81,7 @@ images:
   airflow:
 	  # [UPDATE] : repository '~' 에서 변경
     repository: oreoh/airflow-test
-    tag: 1.0
+    tag: "1.0"
     # Specifying digest takes precedence over tag.
     digest: ~
     pullPolicy: IfNotPresent
