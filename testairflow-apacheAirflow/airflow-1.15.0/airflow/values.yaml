@@ -2548,6 +2548,11 @@ config:
     default_capacity: 1000
 # yamllint enable rule:line-length
 
+# [UPDATE] : add for jdbc connections
+airflow:
+  extraPipPackages:
+    - apache-airflow-providers-jdbc==5.0.0
+
 # Whether Airflow can launch workers and/or pods in multiple namespaces
 # If true, it creates ClusterRole/ClusterRolebinding (with access to entire cluster)
 multiNamespaceMode: false
