@@ -431,7 +431,7 @@ data:
 # Fernet key settings
 # Note: fernetKey can only be set during install, not upgrade
 # [UPDATE] : fernetKey 랜덤으로 변해서 airflow refresh되면 기존 fernetkty가 인식되지 않음
-fernetKey: passwordpasswordpasswordpassword
+fernetKey: password12345678passwordpassword
 fernetKeySecretName: ~
 
 # Flask secret key for Airflow Webserver: `[webserver] secret_key` in airflow.cfg
@@ -2552,6 +2552,7 @@ config:
 airflow:
   extraPipPackages:
     - apache-airflow-providers-jdbc==5.0.0
+  
 
 # Whether Airflow can launch workers and/or pods in multiple namespaces
 # If true, it creates ClusterRole/ClusterRolebinding (with access to entire cluster)
