@@ -431,7 +431,7 @@ data:
 # Fernet key settings
 # Note: fernetKey can only be set during install, not upgrade
 # [UPDATE] : fernetKey 랜덤으로 변해서 airflow refresh되면 기존 fernetkty가 인식되지 않음
-fernetKey: password12345678passwordpassword
+fernetKey: 8JNU8T0MQEBryjvi7ro18npqfyhRjUBFvfLcZpOCnXM=
 fernetKeySecretName: ~
 
 # Flask secret key for Airflow Webserver: `[webserver] secret_key` in airflow.cfg
